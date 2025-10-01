@@ -1,0 +1,292 @@
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Atkinson Hyperlegible', system-ui, sans-serif;
+    @apply bg-blue-100 dark:bg-slate-800;
+    @apply text-blue-900 dark:text-white;
+    @apply min-h-screen;
+    @apply transition-colors duration-300;
+    /* margin: 0;
+    display: flex;
+    place-items: center; */
+    min-width: 320px;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  /* Glassmorphism Effects */
+  .glass {
+    @apply bg-white/70 dark:bg-black/20;
+    /* @apply border border-white/20 dark:border-white/10; */
+    /* @apply shadow-sm shadow-blue-200/50 dark:shadow-yellow-200/50; */
+  }
+  
+  .glass-card {
+    @apply glass rounded-2xl;
+    /* @apply hover:shadow-2xl hover:shadow-blue-100/20 dark:hover:shadow-yellow-100/20; */
+    @apply transition-all duration-300 ease-out;
+    @apply hover:-translate-y-1 hover:scale-[1.02];
+  }
+  
+  .glass-navbar {
+  /* }
+    @apply backdrop-blur-lg bg-blue-200/80 dark:bg-yellow-700/80;
+    @apply border border-blue-300/30 dark:border-yellow-600/30;
+    @apply shadow-sm shadow-blue-500/25 dark:shadow-yellow-500/25; */
+    @apply h-12 backdrop-blur-lg bg-blue-200/80 dark:bg-yellow-500 shadow-md rounded-full px-1 sm:px-3;
+  }
+  
+  .glass-modal {
+    @apply backdrop-blur-2xl bg-white/40 dark:bg-gray-900;
+    @apply border border-white/30 dark:border-white/10;
+    @apply shadow-2xl shadow-blue-500/30 dark:shadow-yellow-500/30;
+  }
+  
+  /* Dropdown Effects */
+  .dropdown-glow {
+    @apply shadow-2xl shadow-blue-500/30 dark:shadow-yellow-500/30;
+    @apply bg-white/90 dark:bg-yellow-800/90;
+    box-shadow:
+      0 4px 22px 0 rgba(31, 38, 135, 0.37),
+      0 0 0 2px rgba(0, 176, 255, 0.15),
+      0 1.5px 5px 0 rgba(80, 0, 255, 0.10);
+    border: 1.5px solid rgba(255,255,255,0.25);
+    animation: dropdownIn 0.35s cubic-bezier(.4,2,.6,1) both;
+    backdrop-filter: blur(18px) saturate(160%);
+  }
+  
+  /* Button Styles */
+  .btn-glass {
+    @apply glass rounded-xl px-4 py-2;
+    @apply hover:bg-white/80 dark:hover:bg-white/10;
+    @apply active:scale-95;
+    @apply transition-all duration-200;
+  }
+  
+  .btn-primary {
+    @apply bg-primary-500 hover:bg-primary-600 dark:bg-accent-500 dark:hover:bg-accent-600;
+    @apply text-white font-semibold;
+    @apply rounded-xl px-6 py-3;
+    @apply shadow-lg shadow-primary-500/30 dark:shadow-accent-500/30;
+    @apply hover:shadow-sm hover:shadow-primary-500/40 dark:hover:shadow-accent-500/40;
+    @apply active:scale-95;
+    @apply transition-all duration-200;
+  }
+  
+  /* Input Styles */
+  .input-glass {
+    @apply glass rounded-xl px-4 py-3;
+    @apply placeholder:text-blue-400 dark:placeholder:text-yellow-300;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 dark:focus:ring-accent-500;
+    @apply transition-all duration-200;
+  }
+  
+  /* Scroll Styles */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(59 130 246 / 0.3) transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-primary-300 dark:bg-accent-300 rounded-full;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary-400 dark:bg-accent-400;
+  }
+  
+  /* Animations */
+  .animate-pulse-soft {
+    animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse-soft {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar but keep functionality */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Scrollbar hide for mobile filter bar */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Smooth scale animations */
+  .hover\:scale-102:hover {
+    transform: scale(1.02);
+  }
+}
+
+:root {
+  font-family: 'Atkinson Hyperlegible', system-ui, sans-serif;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --scrollbar-thumb: #1d4ed8; /* blue-700 */
+  --scrollbar-thumb-hover: #2563eb; /* blue-600 */
+}
+.dark {
+  --scrollbar-thumb: #F7BE00; /* yellow for dark mode */
+  --scrollbar-thumb-hover: #FFD84D; /* lighter yellow for hover */
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+}
+
+/* .dropdown-glow {
+  box-shadow:
+    0 4px 22px 0 rgba(31, 38, 135, 0.37),
+    0 0 0 2px rgba(0, 176, 255, 0.15),
+    0 1.5px 5px 0 rgba(80, 0, 255, 0.10);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  animation: dropdownIn 0.35s cubic-bezier(.4,2,.6,1) both;
+  backdrop-filter: blur(18px) saturate(160%);
+}
+.dark .dropdown-glow {
+  box-shadow:
+    0 4px 22px 0 rgba(255, 180, 80, 0.13),
+    0 0 0 2px rgba(255, 255, 255, 0.06),
+    0 1.5px 5px 0 rgba(255, 180, 80, 0.06);
+  border: 1.5px solid rgba(255,255,255,0.06);
+  animation: dropdownIn 0.35s cubic-bezier(.4,2,.6,1) both;
+  backdrop-filter: blur(18px) saturate(160%);
+  background: rgba(255, 180, 80, 0.06);
+} */
+
+.dropdown-glow {
+  backdrop-filter: blur(32px) saturate(200%) brightness(115%);
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow:
+    0 12px 40px 0 rgba(31, 38, 135, 0.08),
+    0 4px 20px 0 rgba(0, 176, 255, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.12),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+.dark .dropdown-glow {
+  backdrop-filter: blur(32px) saturate(200%) brightness(125%);
+  background: rgba(0, 0, 0, 0.015);
+  box-shadow:
+    0 12px 40px 0 rgba(0, 0, 0, 0.35),
+    0 4px 20px 0 rgba(255, 180, 80, 0.03),
+    0 0 0 1px rgba(255, 255, 255, 0.03),
+    inset 0 2px 0 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 0 rgba(255, 255, 255, 0.03);
+}
+
+@keyframes dropdownIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(.4,2,.6,1);
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 0%;
+  transition: background 0.2s;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Firefox */
+html {
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  scrollbar-width: thin;
+}
+.dark {
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+}
+/* For border-radius in Firefox (limited support) */
+body, * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  /* outline: 1px solid red; */
+}
