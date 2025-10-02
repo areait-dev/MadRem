@@ -55,19 +55,6 @@
     @apply shadow-2xl shadow-blue-500/30 dark:shadow-yellow-500/30;
   }
   
-  /* Dropdown Effects */
-  .dropdown-glow {
-    @apply shadow-2xl shadow-blue-500/30 dark:shadow-yellow-500/30;
-    @apply bg-white/90 dark:bg-yellow-800/90;
-    box-shadow:
-      0 4px 22px 0 rgba(31, 38, 135, 0.37),
-      0 0 0 2px rgba(0, 176, 255, 0.15),
-      0 1.5px 5px 0 rgba(80, 0, 255, 0.10);
-    border: 1.5px solid rgba(255,255,255,0.25);
-    animation: dropdownIn 0.35s cubic-bezier(.4,2,.6,1) both;
-    backdrop-filter: blur(18px) saturate(160%);
-  }
-  
   /* Button Styles */
   .btn-glass {
     @apply glass rounded-xl px-4 py-2;
@@ -196,29 +183,9 @@ h1 {
   }
 }
 
-/* .dropdown-glow {
-  box-shadow:
-    0 4px 22px 0 rgba(31, 38, 135, 0.37),
-    0 0 0 2px rgba(0, 176, 255, 0.15),
-    0 1.5px 5px 0 rgba(80, 0, 255, 0.10);
-  border: 1.5px solid rgba(255,255,255,0.25);
-  animation: dropdownIn 0.35s cubic-bezier(.4,2,.6,1) both;
-  backdrop-filter: blur(18px) saturate(160%);
-}
-.dark .dropdown-glow {
-  box-shadow:
-    0 4px 22px 0 rgba(255, 180, 80, 0.13),
-    0 0 0 2px rgba(255, 255, 255, 0.06),
-    0 1.5px 5px 0 rgba(255, 180, 80, 0.06);
-  border: 1.5px solid rgba(255,255,255,0.06);
-  animation: dropdownIn 0.35s cubic-bezier(.4,2,.6,1) both;
-  backdrop-filter: blur(18px) saturate(160%);
-  background: rgba(255, 180, 80, 0.06);
-} */
-
 .dropdown-glow {
   backdrop-filter: blur(32px) saturate(200%) brightness(115%);
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.50);
   box-shadow:
     0 12px 40px 0 rgba(31, 38, 135, 0.08),
     0 4px 20px 0 rgba(0, 176, 255, 0.05),
@@ -229,7 +196,7 @@ h1 {
 
 .dark .dropdown-glow {
   backdrop-filter: blur(32px) saturate(200%) brightness(125%);
-  background: rgba(0, 0, 0, 0.015);
+  background: rgba(0, 0, 0, 0.50);
   box-shadow:
     0 12px 40px 0 rgba(0, 0, 0, 0.35),
     0 4px 20px 0 rgba(255, 180, 80, 0.03),

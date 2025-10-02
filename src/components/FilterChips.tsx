@@ -101,7 +101,7 @@ const FilterChips = ({ filters, setFilters, deadlines, activeFilter, onFilterCha
             className={`
               flex items-center gap-1.5 px-3 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200 flex-shrink-0 min-w-fit
               ${chip.isActive 
-                ? 'bg-primary-500 dark:bg-accent-500 text-white shadow-lg shadow-primary-500/30 dark:shadow-accent-500/30' 
+                ? 'bg-primary-500 dark:bg-accent-500 text-white shadow-primary-500/30 dark:shadow-accent-500/30' 
                 : 'glass hover:bg-white/80 dark:hover:bg-white/10 text-blue-900 dark:text-white'
               }
             `}

@@ -1,9 +1,23 @@
 import { useEffect, useState } from 'react';
 import packageJson from '../../package.json';
 
-function getCurrentDate() {
-  const now = new Date();
-  return now.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+// Funzione per ottenere la data di release dal package.json
+function getReleaseDate() {
+  // Se esiste una data di release nel package.json, usala
+  if (packageJson.releaseDate) {
+    return new Date(packageJson.releaseDate).toLocaleDateString('it-IT', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
+    });
+  }
+  
+  // Fallback: usa la data corrente (per compatibilità)
+  return new Date().toLocaleDateString('it-IT', { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric' 
+  });
 }
 
 export default function Footer() {
@@ -43,7 +57,7 @@ export default function Footer() {
     >
       <div className="flex flex-row items-center justify-center gap-2">
         <span>
-          v{packageJson.version} &middot; {getCurrentDate()}
+          v{packageJson.version} &middot; {getReleaseDate()}
         </span>
         <span className="text-blue-500 dark:text-yellow-400">
           powered by <span className="ml-1 tracking-wide text-blue-900 dark:text-yellow-300">adr.IA.no-dev</span>

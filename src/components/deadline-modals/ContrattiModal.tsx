@@ -195,10 +195,15 @@ const ContrattiModal = ({ deadline, onSave, onClose }: ContrattiModalProps) => {
               required
               placeholder=" "
               min={getMinDate()}
-              className="peer w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-yellow-500 focus:border-transparent transition-all duration-300 text-slate-900 dark:text-white placeholder-transparent"
+              className="peer w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-yellow-500 focus:border-transparent transition-all duration-300 text-slate-900 dark:text-white placeholder-transparent box-border"
               value={formData.due_date}
               onChange={e => setFormData(prev => ({ ...prev, due_date: e.target.value }))}
               disabled={loading}
+              style={{ 
+                WebkitAppearance: 'none',
+                MozAppearance: 'textfield',
+                appearance: 'none'
+              }}
             />
             <label className="absolute left-3 -top-2.5 text-sm text-slate-500 bg-white dark:bg-slate-800 px-1 pointer-events-none transition-all duration-200 peer-focus:text-blue-600 dark:peer-focus:text-yellow-500 peer-placeholder-shown:top-3.5 peer-placeholder-shown:left-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-slate-500 peer-placeholder-shown:bg-transparent">
               Data Scadenza *

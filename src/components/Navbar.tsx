@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { Search, Settings, Bell, Grid3X3, List, ChevronDown, AlertCircle, CheckCircle, Trash2, Check, X } from 'lucide-react';
+import { Search, Settings, Bell, Grid3X3, List, ChevronDown, AlertCircle, CheckCircle, Trash2, Check } from 'lucide-react';
 import ThemeToggle from './ThemeToggle';
 import type { ViewMode, DeadlineFilters, Deadline, NotificationItem } from '../types';
 import { CATEGORIES, PRIORITIES } from '../types';
@@ -217,7 +217,7 @@ function Navbar({
             )}
           </button>
           
-          <div className={`absolute right-0 top-12 w-80 max-h-96 rounded-2xl border border-blue-100 dark:border-yellow-700 backdrop-blur-sm overflow-hidden transition-all duration-400 ${notifOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto dropdown-glow' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}>
+          <div className={`absolute right-0 top-12 w-80 max-h-96 rounded-2xl border border-blue-100 dark:border-yellow-700 backdrop-blur-md overflow-hidden transition-all duration-400 ${notifOpen ? 'opacity-100 scale-100 translate-y-0 pointer-events-auto dropdown-glow' : 'opacity-0 scale-95 -translate-y-2 pointer-events-none'}`}>
             <div className="px-4 py-3 border-b border-blue-100 dark:border-yellow-700">
               <div className="flex items-center justify-between">
                 <h3 className="text-blue-800 dark:text-white font-semibold text-sm">Notifiche</h3>
@@ -226,7 +226,7 @@ function Navbar({
                     <button
                       onClick={onMarkAllAsRead}
                       className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-                      title="Marca tutte come lette"
+                      title="Segna tutte come lette"
                     >
                       <Check size={12} />
                       Leggi tutte
@@ -269,12 +269,12 @@ function Navbar({
                           {new Date(notif.created_at).toLocaleString('it-IT')}
                         </p>
                       </div>
-                      <div className="flex flex-col gap-1">
+                      <div className="flex flex-row gap-1">
                         {!notif.read && (
                           <button
                             onClick={() => onMarkAsRead(notif.id)}
                             className="w-6 h-6 rounded-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center transition-colors"
-                            title="Marca come letta"
+                            title="Segna come letta"
                           >
                             <Check size={12} />
                           </button>
@@ -284,7 +284,7 @@ function Navbar({
                           className="w-6 h-6 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-colors"
                           title="Elimina notifica"
                         >
-                          <X size={12} />
+                          <Trash2 size={12} />
                         </button>
                       </div>
                     </div>
