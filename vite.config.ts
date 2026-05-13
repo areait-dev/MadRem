@@ -10,9 +10,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['madrem.circle.png'],
       manifest: {
-        name: 'MadRem Infrastructure',
+        name: 'MadRem',
         short_name: 'MadRem',
-        description: 'Gestione Professionale Infrastruttura Aruba',
+        description: 'Monitoraggio Infrastruttura',
         theme_color: '#0a0a0a',
         background_color: '#0a0a0a',
         display: 'standalone',
