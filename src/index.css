@@ -15,8 +15,8 @@
   body {
     font-family: 'Atkinson Hyperlegible', system-ui, sans-serif;
     background-color: #f8f9fa;
-    color: #1e3a8a;
-    /* text-blue-900 */
+    color: #0f172a;
+    /* text-slate-900 */
     min-height: 100vh;
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -171,13 +171,13 @@
 }
 
 a {
-  font-weight: 500;
-  color: #646cff;
+  font-weight: inherit;
+  color: inherit;
   text-decoration: inherit;
 }
 
 a:hover {
-  color: #535bf2;
+  color: #F7BE00;
 }
 
 h1 {
@@ -189,10 +189,6 @@ h1 {
   :root {
     color: #213547;
     background-color: #ffffff;
-  }
-
-  a:hover {
-    color: #747bff;
   }
 }
 
