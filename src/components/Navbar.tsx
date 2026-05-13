@@ -59,16 +59,15 @@ export default function Navbar() {
   };
 
   return (
-    <nav className={`fixed top-0 inset-x-0 z-50 transition-all duration-500 flex justify-center px-2 md:px-4 ${isScrolled ? 'py-2 md:py-3' : 'py-4 md:py-6'
-      }`}>
+    <nav className={`fixed bottom-6 md:bottom-20 inset-x-0 z-50 transition-all duration-500 flex justify-center px-2 md:px-4`}>
       {/* ── High-End Glass Pill ── */}
       <div className={`
         relative w-full max-w-4xl flex items-center justify-between pl-1 pr-1
         transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
         backdrop-blur-xl bg-white/[0.03] dark:bg-black/20 border border-slate-200 dark:border-white/10
         ${isScrolled
-          ? 'h-11 rounded-full shadow-[0_20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.3)] bg-white/80 dark:bg-black/40'
-          : 'h-14 md:h-16 rounded-full md:rounded-[2rem] shadow-[0_10px_30px_rgba(0,0,0,0.05)]'
+          ? 'h-11 rounded-full shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)] bg-white/80 dark:bg-black/40'
+          : 'h-14 md:h-16 rounded-full md:rounded-[2rem] shadow-[0_-10px_30px_rgba(0,0,0,0.05)]'
         }
       `}>
 

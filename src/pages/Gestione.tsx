@@ -255,7 +255,7 @@ const Gestione: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] dark:bg-[#0a0a0a] pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto transition-colors duration-500">
+    <div className="min-h-screen bg-[#f8f9fa] dark:bg-[#0a0a0a] pt-10 pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto transition-colors duration-500">
       <header className="mb-10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
           <div className="space-y-1">

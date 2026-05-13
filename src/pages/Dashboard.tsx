@@ -80,7 +80,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-[#0a0a0a] transition-colors duration-500">
-      <main className="pt-32 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+      <main className="pt-10 pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Header */}
         <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div className="space-y-1">
