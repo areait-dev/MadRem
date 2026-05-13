@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/areait-dev/MadRem/compare/v1.3.0...v2.1.0) (2026-05-13)
+
+
+### Features
+
+* implement bottom floating dock navigation ([6de44b7](https://github.com/areait-dev/MadRem/commit/6de44b7e9dbad61ae3ec197ff28de620e3a1530b))
+* Official Major Release v2.0.0 - Total UI/UX Overhaul & PWA Integration ([3125fce](https://github.com/areait-dev/MadRem/commit/3125fcefa6a4d464a04b7914dd7dad255556bffd))
+
 ## 1.3.0 (2026-05-13)
 
 
