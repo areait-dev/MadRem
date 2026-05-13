@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.1](https://github.com/areait-dev/MadRem/compare/v2.1.0...v2.1.1) (2026-05-13)
+
+
+### Bug Fixes
+
+* add vercel rewrites to prevent 404 on refresh ([3e23124](https://github.com/areait-dev/MadRem/commit/3e23124f9e6532e3fb698e2d8872dee7c50f3012))
+
 ## [2.1.0](https://github.com/areait-dev/MadRem/compare/v1.3.0...v2.1.0) (2026-05-13)
 
 
