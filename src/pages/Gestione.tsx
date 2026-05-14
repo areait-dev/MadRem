@@ -429,7 +429,7 @@ const Gestione: React.FC = () => {
                                 <div className="flex items-start justify-between">
                                   <div className={`flex items-center gap-3 ${rowItem.isGroup ? 'cursor-pointer' : ''}`} onClick={() => rowItem.isGroup && toggleGroup(rowItem.id)}>
                                     <div className={`p-3 rounded-2xl ${activeTab === 'panels' ? 'bg-primary/10 text-primary' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
-                                      {activeTab === 'panels' ? <Mail size={18} /> : (activeTab === 'domains' && rowItem.isGroup) ? <Layers size={18} /> : activeTab === 'domains' ? <Globe size={18} /> : <DbIcon size={18} />}
+                                      {activeTab === 'panels' ? <User size={18} /> : (activeTab === 'domains' && rowItem.isGroup) ? <Layers size={18} /> : activeTab === 'domains' ? <Globe size={18} /> : <DbIcon size={18} />}
                                     </div>
                                     <div className="min-w-0">
                                       <div className="flex items-center gap-2">
@@ -593,7 +593,7 @@ const Gestione: React.FC = () => {
                                     {/* Panels Layout: 4 + 6 + 2 */}
                                     <div className="col-span-4 flex items-center gap-4">
                                       <div className="p-3 rounded-2xl bg-primary/10 text-primary">
-                                        <Mail size={18} />
+                                        <User size={18} />
                                       </div>
                                       <div className="min-w-0">
                                         <p className="text-sm font-black text-slate-900 dark:text-white truncate">{rowItem.title}</p>

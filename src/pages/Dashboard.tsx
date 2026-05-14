@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import {
   Globe,
   Database as DbIcon,
-  Mail,
+  User,
   AlertTriangle,
   ArrowUpRight,
   Clock,
@@ -105,7 +105,7 @@ const Dashboard: React.FC = () => {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
         >
           {[
-            { label: 'Pannelli Aruba', value: stats.totalPanels, icon: Mail, color: 'text-primary' },
+            { label: 'Pannelli', value: stats.totalPanels, icon: User, color: 'text-primary' },
             { label: 'Domini Totali', value: stats.totalDomains, icon: Globe, color: 'text-blue-500' },
             { label: 'Database SQL', value: stats.totalDatabases, icon: DbIcon, color: 'text-orange-500' },
             { label: 'Asset in Scadenza', value: stats.expiringAssets, icon: Clock, color: 'text-red-500' },
