@@ -112,7 +112,7 @@ const Gestione: React.FC = () => {
   const allDatabases = panels.flatMap(p => (p.databases || []).map(db => ({ ...db, panelTitle: p.title || p.email })));
 
   const tabs = [
-    { id: 'panels', label: 'Pannelli Aruba', icon: Mail, count: panels.length },
+    { id: 'panels', label: 'Account', icon: User, count: panels.length },
     { id: 'domains', label: 'Domini', icon: Globe, count: allDomains.length },
     { id: 'databases', label: 'Database', icon: DbIcon, count: allDatabases.length },
   ];
@@ -395,8 +395,8 @@ const Gestione: React.FC = () => {
                   <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-transparent">
                     {activeTab === 'panels' ? (
                       <>
-                        <div className="col-span-4">Pannello Aruba</div>
-                        <div className="col-span-6">Credenziali Accesso Master</div>
+                        <div className="col-span-4">Pannello</div>
+                        <div className="col-span-6">Credenziali Accesso</div>
                         <div className="col-span-2 text-right">Azioni</div>
                       </>
                     ) : activeTab === 'domains' ? (
@@ -452,7 +452,7 @@ const Gestione: React.FC = () => {
                                       </div>
                                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                                         {rowItem.isGroup ? 'Contenitore Pannello' :
-                                          activeTab === 'panels' ? 'Account Aruba' :
+                                          activeTab === 'panels' ? 'Account' :
                                             activeTab === 'domains' ? `${rowItem.panelTitle && !isChild ? rowItem.panelTitle + ' • ' : ''}${getDomainTypeLabel(rowItem.type)}` :
                                               (rowItem.panelTitle || `v${rowItem.sql_version}`)}
                                       </p>
@@ -597,7 +597,7 @@ const Gestione: React.FC = () => {
                                       </div>
                                       <div className="min-w-0">
                                         <p className="text-sm font-black text-slate-900 dark:text-white truncate">{rowItem.title}</p>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account Aruba</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account</p>
                                       </div>
                                     </div>
                                     <div className="col-span-6 flex items-center gap-4">

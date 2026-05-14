@@ -43,7 +43,7 @@ const DatabaseForm: React.FC<DatabaseFormProps> = ({ panels, initialData, onSubm
 
         {/* 1. Panel Selection - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">Pannello Aruba Associato</label>
+          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">Pannello Associato</label>
           <div className="relative group">
             <select
               required
