@@ -1,6 +1,6 @@
 // --- Aruba Infrastructure Types ---
 
-export type DomainType = 'main' | 'subdomain' | 'third_level';
+export type DomainType = 'main' | 'third_level';
 
 export interface ArubaPanel {
   id: string;

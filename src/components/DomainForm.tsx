@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Globe, Type, Calendar, Save, ChevronDown } from 'lucide-react';
+import { Globe, Calendar, Save, ChevronDown } from 'lucide-react';
 import type { Domain, DomainType } from '../types';
 
 interface DomainFormProps {
@@ -27,7 +27,7 @@ const DomainForm: React.FC<DomainFormProps> = ({ panels, initialData, onSubmit, 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        
+
         {/* Panel Selection - Full Width */}
         <div className="md:col-span-2 space-y-2">
           <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">Pannello Aruba Associato</label>
@@ -65,21 +65,26 @@ const DomainForm: React.FC<DomainFormProps> = ({ panels, initialData, onSubmit, 
           </div>
         </div>
 
-        {/* Type */}
-        <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">Tipologia</label>
-          <div className="relative group">
-            <Type className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 pointer-events-none" />
-            <select
-              className="input-glass w-full pl-12 pr-10 text-base font-bold bg-slate-50 dark:bg-white/[0.03] appearance-none cursor-pointer"
-              value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value as DomainType })}
-            >
-              <option value="main" className="dark:bg-slate-900 dark:text-white">Principale</option>
-              <option value="subdomain" className="dark:bg-slate-900 dark:text-white">Sottodominio</option>
-              <option value="third_level" className="dark:bg-slate-900 dark:text-white">Terzo Livello</option>
-            </select>
-            <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 pointer-events-none" />
+        {/* Type Choice */}
+        <div className="md:col-span-2 space-y-3">
+          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">Tipologia Dominio</label>
+          <div className="flex p-1.5 bg-slate-100 dark:bg-white/[0.03] rounded-2xl gap-2">
+            {[
+              { id: 'main', label: 'Dominio Principale' },
+              { id: 'third_level', label: 'Terzo Livello' }
+            ].map((option) => (
+              <button
+                key={option.id}
+                type="button"
+                onClick={() => setFormData({ ...formData, type: option.id as any })}
+                className={`flex-1 py-3 px-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${formData.type === option.id
+                    ? 'bg-primary text-black shadow-lg shadow-primary/20'
+                    : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'
+                  }`}
+              >
+                {option.label}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -91,7 +96,7 @@ const DomainForm: React.FC<DomainFormProps> = ({ panels, initialData, onSubmit, 
             <input
               type="date"
               required
-              className="input-glass w-full pl-12 pr-4 text-base font-bold bg-slate-50 dark:bg-white/[0.03] [color-scheme:light] dark:[color-scheme:dark] min-h-[50px]"
+              className="input-glass appearance-none w-full min-w-0 max-w-full pl-12 pr-4 text-base font-bold bg-slate-50 dark:bg-white/[0.03] [color-scheme:light] dark:[color-scheme:dark] min-h-[50px]"
               value={formData.expiry_date}
               onChange={(e) => setFormData({ ...formData, expiry_date: e.target.value })}
             />

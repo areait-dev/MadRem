@@ -15,7 +15,7 @@ export default {
       colors: {
         primary: {
           DEFAULT: '#F7BE00',
-          50:  '#FFF9E5',
+          50: '#FFF9E5',
           100: '#FFF3CC',
           200: '#FFE799',
           300: '#FFDB66',
@@ -41,7 +41,7 @@ export default {
         },
         // Se vuoi anche una palette 'yellow' custom:
         yellow: {
-          50:  '#FFF9E5',
+          50: '#FFF9E5',
           100: '#FFF3CC',
           200: '#FFE799',
           300: '#FFDB66',

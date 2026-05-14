@@ -172,7 +172,7 @@ const DatabaseForm: React.FC<DatabaseFormProps> = ({ panels, initialData, onSubm
             <input
               type="date"
               required
-              className="input-glass w-full pl-12 pr-4 text-base font-bold bg-slate-50 dark:bg-white/[0.03] [color-scheme:light] dark:[color-scheme:dark] appearance-none min-h-[50px]"
+              className="input-glass appearance-none w-full min-w-0 max-w-full pl-12 pr-4 text-base font-bold bg-slate-50 dark:bg-white/[0.03] [color-scheme:light] dark:[color-scheme:dark] min-h-[50px]"
               value={formData.expiry_date}
               onChange={(e) => setFormData({ ...formData, expiry_date: e.target.value })}
             />

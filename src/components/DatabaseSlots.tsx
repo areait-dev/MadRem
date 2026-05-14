@@ -152,7 +152,7 @@ const DatabaseSlots: React.FC<DatabaseSlotsProps> = ({ database, onUpdate }) => 
                   <input
                     type="text"
                     placeholder="Sito o contenuto..."
-                    className="w-full bg-transparent border-none px-2 py-0.5 text-xs font-bold text-slate-700 dark:text-white outline-none placeholder:text-slate-300 dark:placeholder:text-white/5"
+                    className="w-full bg-transparent border-none px-2 py-0.5 text-base font-bold text-slate-700 dark:text-white outline-none placeholder:text-slate-300 dark:placeholder:text-white/5"
                     value={localSlots[num].content}
                     onChange={(e) => setLocalSlots({ ...localSlots, [num]: { ...localSlots[num], content: e.target.value } })}
                   />
@@ -166,7 +166,7 @@ const DatabaseSlots: React.FC<DatabaseSlotsProps> = ({ database, onUpdate }) => 
                   <input
                     type="text"
                     placeholder="Note..."
-                    className="w-full bg-transparent border-none px-2 py-0.5 text-[10px] font-bold text-slate-400 dark:text-white/40 outline-none placeholder:text-slate-300 dark:placeholder:text-white/5 italic"
+                    className="w-full bg-transparent border-none px-2 py-0.5 text-base font-bold text-slate-400 dark:text-white/40 outline-none placeholder:text-slate-300 dark:placeholder:text-white/5 italic"
                     value={localSlots[num].notes}
                     onChange={(e) => setLocalSlots({ ...localSlots, [num]: { ...localSlots[num], notes: e.target.value } })}
                   />

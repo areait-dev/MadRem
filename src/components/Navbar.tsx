@@ -1,7 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  Bell,
   LayoutDashboard,
   Server,
 } from 'lucide-react';
@@ -21,7 +20,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const notifRef = useRef<HTMLDivElement>(null);
+
 
   // Static avatar from public folder
   const avatarUrl = "/adriano200.png";
@@ -54,7 +53,7 @@ export default function Navbar() {
     const isDark = document.documentElement.classList.contains('dark');
 
     Swal.fire({
-      title: 'VUOI DISCONNETTERTI?',
+      title: 'Vuoi uscire?',
       showCancelButton: true,
       confirmButtonText: 'ESCI',
       cancelButtonText: 'ANNULLA',
@@ -79,14 +78,14 @@ export default function Navbar() {
 
   return (
     <nav className={`
-      fixed bottom-20 md:bottom-8 inset-x-0 z-50 
+      fixed bottom-20 md:bottom-20 inset-x-0 z-50 
       transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] 
       flex justify-center px-4 md:px-4
       ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-[150%] opacity-0 pointer-events-none'}
     `}>
       {/* ── High-End Glass Pill ── */}
       <div className={`
-        relative w-full max-w-4xl flex items-center justify-between pl-1 pr-1
+        relative w-[80%] md:w-full max-w-3xl flex items-center justify-between
         transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
         backdrop-blur-xl bg-white/[0.03] dark:bg-black/20 border border-slate-200 dark:border-white/10
         ${isScrolled
@@ -96,10 +95,10 @@ export default function Navbar() {
       `}>
 
         {/* Logo Section - Hooked to the left edge */}
-        <Link to="/dashboard" className="flex items-center group z-10 bg-slate-100/50 dark:bg-white/5 rounded-full border border-slate-200/50 dark:border-white/5 hover:bg-white/80 dark:hover:bg-white/10 transition-all duration-500">
+        <Link to="/dashboard" className="flex items-center group z-10 transition-all duration-500">
           <div className={`
-            flex items-center justify-center rounded-full group-hover:border-primary/30 transition-all duration-500 overflow-hidden
-            ${isScrolled ? 'h-8 w-8' : 'h-10 w-10 md:h-14 md:w-14'}
+            flex items-center justify-center rounded-full transition-all duration-500 overflow-hidden
+            ${isScrolled ? 'h-11 w-11' : 'h-14 w-14 md:h-14 md:w-14'}
           `}>
             <img src="/madrem.circle.png" alt="Logo" className="w-full h-full object-contain scale-90 group-hover:scale-100 transition-transform duration-700" />
           </div>
@@ -133,28 +132,16 @@ export default function Navbar() {
                 </Link>
               );
             })}
+            <div className="h-6 w-px bg-slate-200 dark:bg-white/10 mx-2" />
+            <ThemeToggle />
           </div>
         </div>
 
-        {/* Right actions */}
-        <div className="flex items-center gap-1 md:gap-2 z-10">
-          <div className="flex items-center gap-1 md:gap-2">
-            <ThemeToggle />
-            <div className="h-6 w-px bg-slate-200 dark:bg-white/10 mx-1 hidden xs:block" />
-
-            <div className="relative hidden xs:block" ref={notifRef}>
-              <button className="relative p-2 rounded-xl text-slate-600 dark:text-white/70 hover:text-[#F7BE00] transition-all duration-300">
-                <Bell size={18} />
-                <span className="absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-[#F7BE00] rounded-full" />
-              </button>
-            </div>
-            <div className="h-6 w-px bg-slate-200 dark:bg-white/10 mx-1 hidden sm:block" />
-          </div>
-
-          {/* Profile Section - Hooked to the right edge */}
+        {/* Profile Section - Hooked to the right edge */}
+        <div className="flex items-center z-10">
           <button
             onClick={handleLogout}
-            className="group flex items-center rounded-full bg-slate-100/50 dark:bg-white/5 hover:bg-red-500/10 transition-all duration-500 border border-slate-200/50 dark:border-white/5 hover:border-red-500/20"
+            className="group flex items-center transition-all duration-500"
           >
             <div className="max-w-0 overflow-hidden group-hover:max-w-[80px] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] hidden sm:block">
               <span className="ml-4 mr-2 text-[10px] font-black uppercase tracking-[0.2em] text-red-500 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
@@ -162,8 +149,8 @@ export default function Navbar() {
               </span>
             </div>
             <div className={`
-              rounded-full overflow-hidden flex items-center justify-center group-hover:border-red-500/30 transition-all duration-500
-              ${isScrolled ? 'h-8 w-8' : 'h-10 w-10 md:h-14 md:w-14'}
+              rounded-full overflow-hidden flex items-center justify-center transition-all duration-500
+              ${isScrolled ? 'h-11 w-11' : 'h-14 w-14 md:h-14 md:w-14'}
             `}>
               <img src={avatarUrl} alt="Profilo" className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-700" />
             </div>

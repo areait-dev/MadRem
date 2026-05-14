@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Plus, Search, Globe, HardDrive, Database as DbIcon, Mail, Inbox,
   Trash2, Edit3, Layers, Eye, EyeOff, Copy, Check,
@@ -67,6 +67,12 @@ const getExpiryColor = (date: string | null) => {
   return 'green';
 };
 
+const getDomainTypeLabel = (type: string) => {
+  if (type === 'main') return 'Dominio Principale';
+  if (type === 'third_level' || type === 'subdomain') return 'Terzo Livello';
+  return type;
+};
+
 const Gestione: React.FC = () => {
   const [activeTab, setActiveTab] = useState<TabType>('panels');
   const [searchQuery, setSearchQuery] = useState('');
@@ -79,7 +85,7 @@ const Gestione: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [viewMode, setViewMode] = useState<'extended' | 'compact'>('compact');
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
-  const [filterType, setFilterType] = useState<string>('all');
+  const [selectedPanel, setSelectedPanel] = useState<string>('all');
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const {
@@ -190,14 +196,22 @@ const Gestione: React.FC = () => {
     }
   };
 
-  const filteredItems = () => {
+  const filteredItems = useMemo(() => {
     let items: any[] = activeTab === 'panels' ? panels : activeTab === 'domains' ? allDomains : allDatabases;
 
+    // Apply Panel Filter
+    if (selectedPanel !== 'all' && activeTab !== 'panels') {
+      items = items.filter((item: any) => item.panel_id === selectedPanel);
+    }
+
+    // Apply search query
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       items = items.filter((item: any) =>
         (item.title || item.name || item.sql_name || '').toLowerCase().includes(query) ||
-        (item.email || item.hostname || '').toLowerCase().includes(query)
+        (item.email || item.hostname || '').toLowerCase().includes(query) ||
+        (item.panelTitle || '').toLowerCase().includes(query) ||
+        (item.associated_domain || '').toLowerCase().includes(query)
       );
     }
 
@@ -224,11 +238,6 @@ const Gestione: React.FC = () => {
       items = Object.values(groups);
     }
 
-    // Apply type filters
-    if (filterType !== 'all') {
-      if (activeTab === 'databases') items = items.filter((db: any) => db.sql_version === filterType);
-    }
-
     return [...items].sort((a: any, b: any) => {
       let valA, valB;
 
@@ -248,7 +257,7 @@ const Gestione: React.FC = () => {
       if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
-  };
+  }, [activeTab, panels, allDomains, allDatabases, selectedPanel, searchQuery, viewMode, sortBy, sortOrder]);
 
   const toggleGroup = (id: string) => {
     setExpandedGroups(prev => ({ ...prev, [id]: !prev[id] }));
@@ -269,104 +278,107 @@ const Gestione: React.FC = () => {
           </button>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-white/5 p-4 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-sm">
-          <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full w-full md:w-auto">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as TabType)}
-                className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 md:px-6 py-3 md:py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}
-              >
-                <tab.icon size={16} />
-                <span className="hidden md:inline">{tab.label}</span>
-                <span className="hidden sm:inline ml-2 px-1.5 py-0.5 rounded-lg bg-slate-200 dark:bg-white/5 text-[9px]">{tab.count}</span>
-              </button>
-            ))}
-          </div>
-
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            {/* View Mode Toggle - ONLY DOMAINS */}
-            {activeTab === 'domains' && (
-              <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full">
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-white/5 p-4 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-sm">
+            <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full w-full md:w-auto">
+              {tabs.map((tab) => (
                 <button
-                  onClick={() => setViewMode('extended')}
-                  className={`p-2 rounded-full transition-all ${viewMode === 'extended' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'}`}
-                  title="Vista Estesa"
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as TabType)}
+                  className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 md:px-6 py-3 md:py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}
                 >
-                  <List size={14} />
+                  <tab.icon size={16} />
+                  <span className="hidden md:inline">{tab.label}</span>
+                  <span className="hidden sm:inline ml-2 px-1.5 py-0.5 rounded-lg bg-slate-200 dark:bg-white/5 text-[9px]">{tab.count}</span>
                 </button>
-                <button
-                  onClick={() => setViewMode('compact')}
-                  className={`p-2 rounded-full transition-all ${viewMode === 'compact' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'}`}
-                  title="Vista Compatta"
-                >
-                  <LayoutGrid size={14} />
-                </button>
-              </div>
-            )}
-
-            {/* Contextual Sorting */}
-            <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full overflow-hidden">
-              <button
-                onClick={() => setSortBy('name')}
-                className={`px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest transition-all ${sortBy === 'name' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-              >
-                Nome
-              </button>
-              {activeTab !== 'panels' && (
-                <>
-                  <button
-                    onClick={() => setSortBy('expiry')}
-                    className={`px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest transition-all ${sortBy === 'expiry' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                  >
-                    Data
-                  </button>
-                  <button
-                    onClick={() => setSortBy('status')}
-                    className={`px-3 py-1.5 rounded-full text-[8px] font-black uppercase tracking-widest transition-all ${sortBy === 'status' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                  >
-                    Stato
-                  </button>
-                </>
-              )}
-              <div className="w-px h-3 bg-slate-200 dark:bg-white/10 self-center mx-1" />
-              <button
-                onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
-                className="px-2 text-slate-400 hover:text-primary transition-colors"
-              >
-                {sortOrder === 'asc' ? <SortAsc size={14} /> : <SortDesc size={14} />}
-              </button>
+              ))}
             </div>
 
-            {/* Contextual Filters */}
-            {activeTab === 'databases' && (
-              <div className="relative group">
-                <select
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                  className="appearance-none bg-slate-100 dark:bg-black/20 text-slate-500 dark:text-slate-400 text-[8px] font-black uppercase tracking-widest pl-8 pr-8 py-2.5 rounded-full outline-none border-none cursor-pointer hover:bg-slate-200 dark:hover:bg-white/5 transition-all"
-                >
-                  <option value="all">Tutti i tipi</option>
-                  {Array.from(new Set(allDatabases.map(db => db.sql_version))).filter(Boolean).map(version => (
-                    <option key={version || ''} value={version || ''}>{version}</option>
-                  ))}
-                </select>
-                <Filter size={10} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                <ChevronDownIcon size={10} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-              </div>
-            )}
+            <div className="flex flex-wrap md:flex-nowrap items-center gap-4 lg:gap-6 w-full md:w-auto justify-center md:justify-end">
+              {/* View Mode Toggle - ONLY DOMAINS */}
+              {activeTab === 'domains' && (
+                <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full shrink-0">
+                  <button
+                    onClick={() => setViewMode('extended')}
+                    className={`p-2.5 rounded-full transition-all ${viewMode === 'extended' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'}`}
+                    title="Vista Estesa"
+                  >
+                    <List size={16} />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('compact')}
+                    className={`p-2.5 rounded-full transition-all ${viewMode === 'compact' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'}`}
+                    title="Vista Compatta"
+                  >
+                    <LayoutGrid size={16} />
+                  </button>
+                </div>
+              )}
 
-            <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full flex-1 md:w-64">
-              <div className="relative w-full group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={14} />
-                <input
-                  type="text"
-                  placeholder={`Cerca...`}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 md:py-2 bg-transparent border-transparent rounded-full text-[10px] font-black uppercase tracking-widest outline-none transition-all placeholder:text-slate-400/60"
-                />
+              {/* Contextual Sorting */}
+              <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full overflow-hidden shrink-0">
+                <button
+                  onClick={() => setSortBy('name')}
+                  className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === 'name' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                >
+                  Nome
+                </button>
+                {activeTab !== 'panels' && (
+                  <>
+                    <button
+                      onClick={() => setSortBy('expiry')}
+                      className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === 'expiry' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                      Data
+                    </button>
+                    <button
+                      onClick={() => setSortBy('status')}
+                      className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === 'status' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    >
+                      Stato
+                    </button>
+                  </>
+                )}
+                <div className="w-px h-3 bg-slate-200 dark:bg-white/10 self-center mx-1" />
+                <button
+                  onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
+                  className="px-3 text-slate-400 hover:text-primary transition-colors"
+                >
+                  {sortOrder === 'asc' ? <SortAsc size={16} /> : <SortDesc size={16} />}
+                </button>
               </div>
+
+              {/* Panel Filter - Contextual */}
+              {activeTab !== 'panels' && (
+                <div className="relative group w-full md:w-auto shrink-0">
+                  <select
+                    value={selectedPanel}
+                    onChange={(e) => setSelectedPanel(e.target.value)}
+                    className="appearance-none bg-slate-100 dark:bg-black/20 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest pl-10 pr-12 py-3.5 rounded-full outline-none border-none cursor-pointer hover:bg-slate-200 dark:hover:bg-white/5 transition-all w-full md:min-w-[180px]"
+                  >
+                    <option value="all">Tutti i Pannelli</option>
+                    {panels.map(p => (
+                      <option key={p.id} value={p.id}>{p.title || p.email}</option>
+                    ))}
+                  </select>
+                  <Filter size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  <ChevronDownIcon size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Search Row */}
+          <div className="bg-white dark:bg-white/5 p-2 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-sm">
+            <div className="relative w-full group">
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
+              <input
+                type="text"
+                placeholder={`Cerca tra ${activeTab === 'panels' ? 'i pannelli' : activeTab === 'domains' ? 'i domini' : 'i database'}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-14 pr-6 py-4 bg-transparent border-transparent rounded-full text-base font-black uppercase tracking-widest outline-none transition-all placeholder:text-slate-400/60"
+              />
             </div>
           </div>
         </div>
@@ -379,7 +391,7 @@ const Gestione: React.FC = () => {
             <div className="bg-white dark:bg-white/5 rounded-[2.5rem] border border-slate-200 dark:border-white/5 overflow-hidden shadow-sm">
               {/* Table Wrapper for Horizontal Scroll on Mid-Screens */}
               <div className="overflow-x-auto custom-scrollbar">
-                <div className="min-w-[1000px] md:min-w-0">
+                <div className="md:min-w-[1000px]">
                   <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-5 text-[10px] font-black text-slate-400 dark:text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-transparent">
                     {activeTab === 'panels' ? (
                       <>
@@ -407,372 +419,393 @@ const Gestione: React.FC = () => {
                   </div>
 
                   <div className="divide-y divide-slate-100 dark:divide-white/5">
-                {filteredItems().length > 0 ? (
-                  filteredItems().map((item: any) => {
-                    const renderRow = (rowItem: any, isChild = false) => {
-                      const expiryColor = getExpiryColor(rowItem.expiry_date);
-                      const formattedDate = rowItem.expiry_date ? new Date(rowItem.expiry_date).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'N/D';
+                    {filteredItems.length > 0 ? (
+                      filteredItems.map((item: any) => {
+                        const renderRow = (rowItem: any, isChild = false) => {
+                          const expiryColor = getExpiryColor(rowItem.expiry_date);
+                          const formattedDate = rowItem.expiry_date ? new Date(rowItem.expiry_date).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'N/D';
 
-                      return (
-                        <div key={rowItem.id} className="transition-all">
-                          {/* --- MOBILE VIEW: Card Layout --- */}
-                          <div className="md:hidden p-5 space-y-4">
-                            <div className="flex items-start justify-between">
-                              <div className="flex items-center gap-3">
-                                <div className={`p-3 rounded-2xl ${activeTab === 'panels' ? 'bg-primary/10 text-primary' : activeTab === 'domains' ? 'bg-blue-500/10 text-blue-500' : 'bg-orange-500/10 text-orange-500'}`}>
-                                  {activeTab === 'panels' ? <Mail size={18} /> : activeTab === 'domains' ? <Globe size={18} /> : <DbIcon size={18} />}
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="flex items-center gap-2">
-                                    <p className="text-sm font-black text-slate-900 dark:text-white truncate">{rowItem.title || rowItem.name || rowItem.sql_name}</p>
-                                    {activeTab === 'domains' && viewMode === 'compact' && rowItem.subdomains?.length > 0 && (
-                                      <span className="px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-500 text-[8px] font-black uppercase tracking-tighter whitespace-nowrap">
-                                        +{rowItem.subdomains.length} sub
-                                      </span>
+                          return (
+                            <div key={rowItem.id} className="transition-all">
+                              {/* --- MOBILE VIEW: Card Layout --- */}
+                              <div className={`md:hidden p-5 space-y-4 ${isChild ? 'ml-4 border-l-2 border-slate-100 dark:border-white/5 pl-4' : ''}`}>
+                                <div className="flex items-start justify-between">
+                                  <div className={`flex items-center gap-3 ${rowItem.isGroup ? 'cursor-pointer' : ''}`} onClick={() => rowItem.isGroup && toggleGroup(rowItem.id)}>
+                                    <div className={`p-3 rounded-2xl ${activeTab === 'panels' ? 'bg-primary/10 text-primary' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
+                                      {activeTab === 'panels' ? <Mail size={18} /> : (activeTab === 'domains' && rowItem.isGroup) ? <Layers size={18} /> : activeTab === 'domains' ? <Globe size={18} /> : <DbIcon size={18} />}
+                                    </div>
+                                    <div className="min-w-0">
+                                      <div className="flex items-center gap-2">
+                                        <p className="text-sm font-black truncate text-slate-900 dark:text-white">
+                                          {rowItem.title || rowItem.name || rowItem.sql_name}
+                                        </p>
+                                        {activeTab === 'domains' && rowItem.isGroup && (
+                                          <div className="flex items-center gap-2">
+                                            <span className="px-1.5 py-0.5 rounded-md bg-primary/20 text-primary text-[8px] font-black uppercase tracking-tighter whitespace-nowrap">
+                                              {rowItem.subdomains?.length || 0} ASSET
+                                            </span>
+                                            <ChevronDownIcon size={14} className={`text-slate-400 transition-transform duration-300 ${expandedGroups[rowItem.id] ? 'rotate-180' : ''}`} />
+                                          </div>
+                                        )}
+                                      </div>                                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                        {rowItem.isGroup ? 'Contenitore Pannello' : 
+                                         activeTab === 'panels' ? 'Account Aruba Master' :
+                                         activeTab === 'domains' ? `${rowItem.panelTitle && !isChild ? rowItem.panelTitle + ' • ' : ''}${getDomainTypeLabel(rowItem.type)}` :
+                                         (rowItem.panelTitle || `v${rowItem.sql_version}`)}
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  {/* Expiry Badge (Mobile) */}
+                                  <div>
+                                    {activeTab === 'panels' ? (
+                                      <div className="px-2 py-1 rounded-lg bg-green-500/10 text-green-500 text-[9px] font-black uppercase tracking-widest">OK</div>
+                                    ) : (
+                                      <div className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500' :
+                                        expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
+                                          'bg-slate-100 dark:bg-white/5 text-slate-400'
+                                        }`}>
+                                        {formattedDate}
+                                      </div>
                                     )}
                                   </div>
-                                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{rowItem.panelTitle || (activeTab === 'domains' ? rowItem.type : rowItem.sql_version)}</p>
                                 </div>
-                              </div>
 
-                              {/* Expiry Badge (Mobile) */}
-                              <div>
-                                {activeTab === 'panels' ? (
-                                  <div className="px-2 py-1 rounded-lg bg-green-500/10 text-green-500 text-[9px] font-black uppercase tracking-widest">OK</div>
-                                ) : (
-                                  <div className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500' :
-                                    expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
-                                      'bg-slate-100 dark:bg-white/5 text-slate-400'
-                                    }`}>
-                                    {formattedDate}
+                                {/* Credentials / Details (Mobile) */}
+                                {(!(activeTab === 'domains' && rowItem.isGroup)) && (
+                                  <div className="bg-slate-50 dark:bg-black/20 rounded-[2rem] p-4 space-y-3">
+                                    {activeTab === 'domains' ? (
+                                      <div className="flex items-center gap-2">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase">Pannello:</span>
+                                        <span className="text-[10px] font-black text-slate-600 dark:text-white/70 uppercase tracking-widest">{rowItem.panelTitle}</span>
+                                      </div>
+                                    ) : activeTab === 'databases' ? (
+                                      <div className="space-y-3">
+                                        {/* User & Pass Row */}
+                                        <div className="flex flex-col gap-2">
+                                          <div className="flex items-center justify-between group/mobcred" onClick={() => copyToClipboard(rowItem.sql_name, `${rowItem.id}-user-mob`)}>
+                                            <div className="flex items-center gap-2 overflow-hidden">
+                                              <User size={12} className="text-slate-400" />
+                                              <span className="text-[11px] font-bold text-slate-600 dark:text-white/80 truncate">{rowItem.sql_name}</span>
+                                            </div>
+                                            {copiedField === `${rowItem.id}-user-mob` ? <Check size={12} className="text-green-500" /> : <Copy size={12} className="text-slate-400 opacity-50" />}
+                                          </div>
+                                          <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                              <Lock size={12} className="text-slate-400" />
+                                              <span className="text-[11px] font-bold text-slate-600 dark:text-white/80 font-mono">{visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}</span>
+                                            </div>
+                                            <div className="flex gap-2">
+                                              <button onClick={() => togglePassword(rowItem.id)} className="p-1.5 text-slate-400">
+                                                {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
+                                              </button>
+                                              <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass-mob`)} className="p-1.5 text-slate-400">
+                                                {copiedField === `${rowItem.id}-pass-mob` ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                                              </button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                        {/* Tech Specs Row (Simplified) */}
+                                        <div className="pt-2 border-t border-slate-100 dark:border-white/5 space-y-2">
+                                          <div className="flex justify-between items-center">
+                                            <div className="flex items-center gap-2">
+                                              <Globe size={12} className="text-slate-400" />
+                                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Dominio:</span>
+                                            </div>
+                                            <span className="text-[10px] font-black text-slate-600 dark:text-white/80 truncate max-w-[140px] text-right">{rowItem.associated_domain}</span>
+                                          </div>
+                                          <div className="flex justify-between items-center">
+                                            <div className="flex items-center gap-2">
+                                              <Mail size={12} className="text-slate-400" />
+                                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Pannello:</span>
+                                            </div>
+                                            <span className="text-[10px] font-black text-slate-600 dark:text-white/80 truncate max-w-[140px] text-right">{rowItem.panelTitle}</span>
+                                          </div>
+                                          <div className="flex justify-between items-center">
+                                            <div className="flex items-center gap-2">
+                                              <HardDrive size={12} className="text-slate-400" />
+                                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tighter">Dimensione:</span>
+                                            </div>
+                                            <span className="text-[10px] font-black text-primary uppercase">{rowItem.size_gb}GB</span>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <>
+                                        <div className="flex items-center justify-between group/mobcred" onClick={() => copyToClipboard(rowItem.email, `${rowItem.id}-user-mob`)}>
+                                          <div className="flex items-center gap-2 overflow-hidden">
+                                            <User size={12} className="text-slate-400" />
+                                            <span className="text-[11px] font-bold text-slate-600 dark:text-white/80 truncate">{rowItem.email}</span>
+                                          </div>
+                                          {copiedField === `${rowItem.id}-user-mob` ? <Check size={12} className="text-green-500" /> : <Copy size={12} className="text-slate-400 opacity-50" />}
+                                        </div>
+                                        <div className="flex items-center justify-between border-t border-slate-100 dark:border-white/5 pt-2">
+                                          <div className="flex items-center gap-2">
+                                            <Lock size={12} className="text-slate-400" />
+                                            <span className="text-[11px] font-bold text-slate-600 dark:text-white/80 font-mono">{visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}</span>
+                                          </div>
+                                          <div className="flex gap-2">
+                                            <button onClick={() => togglePassword(rowItem.id)} className="p-1.5 text-slate-400">
+                                              {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
+                                            </button>
+                                            <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass-mob`)} className="p-1.5 text-slate-400">
+                                              {copiedField === `${rowItem.id}-pass-mob` ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </>
+                                    )}
                                   </div>
                                 )}
-                              </div>
-                            </div>
 
-                            {/* Credentials / Details (Mobile) */}
-                            <div className="bg-slate-50 dark:bg-black/20 rounded-[2rem] p-4 space-y-3">
-                              {activeTab === 'domains' ? (
-                                <div className="flex items-center gap-2">
-                                  <span className="text-[10px] font-bold text-slate-400 uppercase">Pannello:</span>
-                                  <span className="text-[10px] font-black text-slate-600 dark:text-white/70 uppercase tracking-widest">{rowItem.panelTitle}</span>
-                                </div>
-                              ) : activeTab === 'databases' ? (
-                                <div className="space-y-3">
-                                  {/* User & Pass Row */}
-                                  <div className="flex flex-col gap-2">
-                                    <div className="flex items-center justify-between group/mobcred" onClick={() => copyToClipboard(rowItem.sql_name, `${rowItem.id}-user-mob`)}>
-                                      <div className="flex items-center gap-2 overflow-hidden">
-                                        <User size={12} className="text-slate-400" />
-                                        <span className="text-[11px] font-bold text-slate-600 dark:text-white/80 truncate">{rowItem.sql_name}</span>
-                                      </div>
-                                      {copiedField === `${rowItem.id}-user-mob` ? <Check size={12} className="text-green-500" /> : <Copy size={12} className="text-slate-400 opacity-50" />}
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                      <div className="flex items-center gap-2">
-                                        <Lock size={12} className="text-slate-400" />
-                                        <span className="text-[11px] font-bold text-slate-600 dark:text-white/80 font-mono">{visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}</span>
-                                      </div>
-                                      <div className="flex gap-2">
-                                        <button onClick={() => togglePassword(rowItem.id)} className="p-1.5 text-slate-400">
-                                          {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
-                                        </button>
-                                        <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass-mob`)} className="p-1.5 text-slate-400">
-                                          {copiedField === `${rowItem.id}-pass-mob` ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                  {/* Tech Specs Row */}
-                                  <div className="pt-2 border-t border-slate-100 dark:border-white/5 grid grid-cols-2 gap-3">
-                                    <div className="flex flex-col gap-0.5">
-                                      <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter">Hostname</span>
-                                      <span className="text-[10px] font-bold text-slate-600 dark:text-white/70 truncate">{rowItem.hostname}</span>
-                                    </div>
-                                    <div className="flex flex-col gap-0.5 text-right">
-                                      <span className="text-[8px] font-black text-slate-400 uppercase tracking-tighter">Dominio</span>
-                                      <span className="text-[10px] font-bold text-slate-600 dark:text-white/70 truncate">{rowItem.associated_domain}</span>
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                      <HardDrive size={10} className="text-slate-400" />
-                                      <span className="text-[10px] font-black text-slate-600 dark:text-white/70">{rowItem.size_gb}GB</span>
-                                    </div>
-                                    <div className="flex items-center gap-1 justify-end">
-                                      <Globe size={10} className="text-slate-400" />
-                                      <span className="text-[10px] font-black text-slate-600 dark:text-white/70">{rowItem.panelTitle}</span>
-                                    </div>
-                                  </div>
-                                </div>
-                              ) : (
-                                <>
-                                  <div className="flex items-center justify-between group/mobcred" onClick={() => copyToClipboard(rowItem.email, `${rowItem.id}-user-mob`)}>
-                                    <div className="flex items-center gap-2 overflow-hidden">
-                                      <User size={12} className="text-slate-400" />
-                                      <span className="text-[11px] font-bold text-slate-600 dark:text-white/80 truncate">{rowItem.email}</span>
-                                    </div>
-                                    {copiedField === `${rowItem.id}-user-mob` ? <Check size={12} className="text-green-500" /> : <Copy size={12} className="text-slate-400 opacity-50" />}
-                                  </div>
-                                  <div className="flex items-center justify-between border-t border-slate-100 dark:border-white/5 pt-2">
-                                    <div className="flex items-center gap-2">
-                                      <Lock size={12} className="text-slate-400" />
-                                      <span className="text-[11px] font-bold text-slate-600 dark:text-white/80 font-mono">{visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}</span>
-                                    </div>
-                                    <div className="flex gap-2">
-                                      <button onClick={() => togglePassword(rowItem.id)} className="p-1.5 text-slate-400">
-                                        {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
-                                      </button>
-                                      <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass-mob`)} className="p-1.5 text-slate-400">
-                                        {copiedField === `${rowItem.id}-pass-mob` ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
-                                      </button>
-                                    </div>
-                                  </div>
-                                </>
-                              )}
-                            </div>
-
-                            {/* Action Row (Mobile) */}
-                            <div className="flex gap-2 pt-1">
-                              {activeTab === 'databases' && (
-                                <button onClick={() => handleOpenSlots(rowItem)} className="flex-1 py-3 rounded-xl bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
-                                  <Layers size={14} /> Slot
-                                </button>
-                              )}
-                              <button onClick={() => handleOpenModal(rowItem)} className="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-white/50 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2">
-                                <Edit3 size={14} /> Modifica
-                              </button>
-                              <button onClick={() => handleDelete(rowItem)} className="p-3 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center">
-                                <Trash2 size={16} />
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* --- DESKTOP VIEW: Grid Row --- */}
-                          <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-5 items-center hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
-
-                            {activeTab === 'panels' ? (
-                              <>
-                                {/* Panels Layout: 4 + 6 + 2 */}
-                                <div className="col-span-4 flex items-center gap-4">
-                                  <div className="p-3 rounded-2xl bg-primary/10 text-primary">
-                                    <Mail size={18} />
-                                  </div>
-                                  <div className="min-w-0">
-                                    <p className="text-sm font-black text-slate-900 dark:text-white truncate">{rowItem.title}</p>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account Aruba Master</p>
-                                  </div>
-                                </div>
-                                <div className="col-span-6 flex items-center gap-4">
-                                  <div className="flex items-center bg-slate-100 dark:bg-white/5 rounded-xl px-4 py-2 border border-transparent hover:border-primary/20 transition-all cursor-pointer group/cred w-[240px]"
-                                    onClick={() => copyToClipboard(rowItem.email, `${rowItem.id}-user`)}>
-                                    <User size={14} className="text-slate-400 mr-2 flex-shrink-0" />
-                                    <span className="text-[12px] font-bold text-slate-600 dark:text-white/80 truncate flex-1">
-                                      {rowItem.email}
-                                    </span>
-                                    <div className="ml-2 opacity-0 group-hover/cred:opacity-100 transition-opacity flex-shrink-0">
-                                      {copiedField === `${rowItem.id}-user` ? <Check size={12} className="text-green-500" /> : <Copy size={12} className="text-slate-400" />}
-                                    </div>
-                                  </div>
-                                  <div className="flex items-center bg-slate-100 dark:bg-white/5 rounded-xl px-4 py-2 border border-transparent hover:border-primary/20 transition-all w-[240px]">
-                                    <Lock size={14} className="text-slate-400 mr-2 flex-shrink-0" />
-                                    <span className="text-[12px] font-bold text-slate-600 dark:text-white/80 font-mono truncate flex-1">
-                                      {visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}
-                                    </span>
-                                    <div className="flex items-center gap-1 ml-2 flex-shrink-0">
-                                      <button onClick={() => togglePassword(rowItem.id)} className="p-1 hover:text-primary transition-colors text-slate-400">
-                                        {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
-                                      </button>
-                                      <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass`)} className="p-1 hover:text-primary transition-colors text-slate-400">
-                                        {copiedField === `${rowItem.id}-pass` ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
-                                      </button>
-                                    </div>
-                                  </div>
-                                </div>
-                              </>
-                            ) : activeTab === 'domains' ? (
-                              <>
-                                {/* Domains Layout: 3 + 3 + 2 + 3 + 1 */}
-                                <div className={`col-span-3 flex items-center gap-4 ${isChild ? 'pl-12' : ''}`}>
-                                  <div className={`p-3 rounded-2xl ${rowItem.isGroup ? 'bg-indigo-500 text-white shadow-lg shadow-indigo-500/20 cursor-pointer' : 'bg-blue-500/10 text-blue-500'}`} onClick={() => rowItem.isGroup && toggleGroup(rowItem.id)}>
-                                    {rowItem.isGroup ? <Layers size={18} /> : <Globe size={18} />}
-                                  </div>
-                                  <div className="min-w-0">
-                                    <div className="flex items-center gap-2">
-                                      <button onClick={() => rowItem.isGroup && toggleGroup(rowItem.id)} className={`text-sm font-black truncate text-left hover:text-primary transition-colors ${rowItem.isGroup ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-900 dark:text-white'}`}>
-                                        {rowItem.name}
-                                      </button>
-                                      {rowItem.isGroup && (
-                                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => toggleGroup(rowItem.id)}>
-                                          <span className="px-2 py-0.5 rounded-full bg-indigo-500 text-white text-[9px] font-black shadow-sm">
-                                            {rowItem.subdomains.length} ASSET
-                                          </span>
-                                          <ChevronDownIcon size={14} className={`text-indigo-500 transition-transform ${expandedGroups[rowItem.id] ? 'rotate-180' : ''}`} />
-                                        </div>
-                                      )}
-                                    </div>
-                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                                      {rowItem.isGroup ? 'Contenitore Pannello' : rowItem.type}
-                                    </p>
-                                  </div>
-                                </div>
-                                <div className="col-span-3 flex items-center gap-2">
+                                {/* Action Row (Mobile) */}
+                                <div className="flex gap-2 pt-1">
+                                  {activeTab === 'databases' && !rowItem.isGroup && (
+                                    <button onClick={() => handleOpenSlots(rowItem)} className="flex-1 py-3 rounded-xl bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 min-w-0">
+                                      <Layers size={14} className="flex-shrink-0" /> <span className="truncate">Slot</span>
+                                    </button>
+                                  )}
                                   {!rowItem.isGroup && (
                                     <>
-                                      <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400">
-                                        <Mail size={12} />
-                                      </div>
-                                      <span className="text-[11px] font-bold text-slate-500 dark:text-white/70 uppercase tracking-widest truncate">
-                                        {rowItem.panelTitle}
-                                      </span>
+                                      <button onClick={() => handleOpenModal(rowItem)} className="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-white/50 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 min-w-0">
+                                        <Edit3 size={14} className="flex-shrink-0" /> <span className="truncate">Modifica</span>
+                                      </button>
+                                      <button onClick={() => handleDelete(rowItem)} className="p-3 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center flex-shrink-0">
+                                        <Trash2 size={16} />
+                                      </button>
                                     </>
                                   )}
                                 </div>
-                                <div className="col-span-2">
-                                  <div className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500' :
-                                    expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
-                                      expiryColor === 'green' ? 'bg-green-500/10 text-green-500' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
-                                    {formattedDate}
-                                  </div>
-                                </div>
-                                <div className="col-span-3">
-                                  <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 line-clamp-1 italic pr-4">
-                                    {rowItem.notes ? `"${rowItem.notes}"` : <span className="opacity-20">—</span>}
-                                  </p>
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                {/* Databases Layout: 3 + 4 + 2 + 2 + 1 */}
-                                <div className="col-span-3 flex items-center gap-4">
-                                  <div className="p-3 rounded-2xl bg-orange-500/10 text-orange-500 cursor-pointer" onClick={() => toggleGroup(rowItem.id)}>
-                                    <DbIcon size={18} />
-                                  </div>
-                                  <div className="min-w-0 flex-1">
-                                    <div className="flex items-center gap-2">
-                                      <button onClick={() => toggleGroup(rowItem.id)} className="text-sm font-black text-slate-900 dark:text-white truncate hover:text-primary transition-colors">
-                                        {rowItem.sql_name}
+                              </div>
+
+                              {/* --- DESKTOP VIEW: Grid Row --- */}
+                              <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-5 items-center hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
+
+                                {activeTab === 'panels' ? (
+                                  <>
+                                    {/* Panels Layout: 4 + 6 + 2 */}
+                                    <div className="col-span-4 flex items-center gap-4">
+                                      <div className="p-3 rounded-2xl bg-primary/10 text-primary">
+                                        <Mail size={18} />
+                                      </div>
+                                      <div className="min-w-0">
+                                        <p className="text-sm font-black text-slate-900 dark:text-white truncate">{rowItem.title}</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account Aruba Master</p>
+                                      </div>
+                                    </div>
+                                    <div className="col-span-6 flex items-center gap-4">
+                                      <div className="flex items-center bg-slate-100 dark:bg-white/5 rounded-xl px-4 py-2 border border-transparent hover:border-primary/20 transition-all cursor-pointer group/cred w-[240px]"
+                                        onClick={() => copyToClipboard(rowItem.email, `${rowItem.id}-user`)}>
+                                        <User size={14} className="text-slate-400 mr-2 flex-shrink-0" />
+                                        <span className="text-[12px] font-bold text-slate-600 dark:text-white/80 truncate flex-1">
+                                          {rowItem.email}
+                                        </span>
+                                        <div className="ml-2 opacity-0 group-hover/cred:opacity-100 transition-opacity flex-shrink-0">
+                                          {copiedField === `${rowItem.id}-user` ? <Check size={12} className="text-green-500" /> : <Copy size={12} className="text-slate-400" />}
+                                        </div>
+                                      </div>
+                                      <div className="flex items-center bg-slate-100 dark:bg-white/5 rounded-xl px-4 py-2 border border-transparent hover:border-primary/20 transition-all w-[240px]">
+                                        <Lock size={14} className="text-slate-400 mr-2 flex-shrink-0" />
+                                        <span className="text-[12px] font-bold text-slate-600 dark:text-white/80 font-mono truncate flex-1">
+                                          {visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}
+                                        </span>
+                                        <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+                                          <button onClick={() => togglePassword(rowItem.id)} className="p-1 hover:text-primary transition-colors text-slate-400">
+                                            {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
+                                          </button>
+                                          <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass`)} className="p-1 hover:text-primary transition-colors text-slate-400">
+                                            {copiedField === `${rowItem.id}-pass` ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </>
+                                ) : activeTab === 'domains' ? (
+                                  <>
+                                    {/* Domains Layout: 3 + 3 + 2 + 3 + 1 */}
+                                    <div className={`col-span-3 flex items-center gap-4 ${isChild ? 'pl-12' : ''}`}>
+                                    <div className={`p-3 rounded-2xl ${rowItem.isGroup ? 'bg-slate-100 dark:bg-white/5 text-slate-400 cursor-pointer' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`} onClick={() => rowItem.isGroup && toggleGroup(rowItem.id)}>
+                                        {rowItem.isGroup ? <Layers size={18} /> : <Globe size={18} />}
+                                      </div>
+                                      <div className="min-w-0">
+                                        <div className="flex items-center gap-2">
+                                          <button onClick={() => rowItem.isGroup && toggleGroup(rowItem.id)} className="text-sm font-black truncate text-left hover:text-primary transition-colors text-slate-900 dark:text-white">
+                                            {rowItem.name}
+                                          </button>
+                                          {rowItem.isGroup && (
+                                            <div className="flex items-center gap-2 cursor-pointer" onClick={() => toggleGroup(rowItem.id)}>
+                                              <span className="px-2 py-0.5 rounded-full bg-primary/20 text-primary text-[9px] font-black shadow-sm">
+                                                {rowItem.subdomains?.length || 0} ASSET
+                                              </span>
+                                              <ChevronDownIcon size={14} className={`text-slate-400 transition-transform ${expandedGroups[rowItem.id] ? 'rotate-180' : ''}`} />
+                                            </div>
+                                          )}
+                                        </div>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                          {rowItem.isGroup ? 'Contenitore Pannello' : 
+                                           (rowItem.panelTitle && !isChild ? rowItem.panelTitle + ' • ' : '') + getDomainTypeLabel(rowItem.type)}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <div className="col-span-3 flex items-center gap-2">
+                                      {!rowItem.isGroup && (
+                                        <>
+                                          <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400">
+                                            <Mail size={12} />
+                                          </div>
+                                          <span className="text-[11px] font-bold text-slate-500 dark:text-white/70 uppercase tracking-widest truncate">
+                                            {rowItem.panelTitle}
+                                          </span>
+                                        </>
+                                      )}
+                                    </div>
+                                    <div className="col-span-2">
+                                      <div className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500' :
+                                        expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
+                                          expiryColor === 'green' ? 'bg-green-500/10 text-green-500' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
+                                        {formattedDate}
+                                      </div>
+                                    </div>
+                                    <div className="col-span-3">
+                                      <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 line-clamp-1 italic pr-4">
+                                        {rowItem.notes ? `"${rowItem.notes}"` : <span className="opacity-20">—</span>}
+                                      </p>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    {/* Databases Layout: 3 + 4 + 2 + 2 + 1 */}
+                                    <div className="col-span-3 flex items-center gap-4">
+                                      <div className="p-3 rounded-2xl bg-slate-100 dark:bg-white/5 text-slate-400 cursor-pointer" onClick={() => toggleGroup(rowItem.id)}>
+                                        <DbIcon size={18} />
+                                      </div>
+                                      <div className="min-w-0 flex-1">
+                                        <div className="flex items-center gap-2">
+                                          <button onClick={() => toggleGroup(rowItem.id)} className="text-sm font-black text-slate-900 dark:text-white truncate hover:text-primary transition-colors">
+                                            {rowItem.sql_name}
+                                          </button>
+                                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onClick={() => copyToClipboard(rowItem.sql_name, `${rowItem.id}-user`)} className="p-1 text-slate-400 hover:text-primary">
+                                              {copiedField === `${rowItem.id}-user` ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
+                                            </button>
+                                          </div>
+                                        </div>
+                                        <div className="flex items-center gap-2 group/dbpass">
+                                          <span className="text-[11px] font-bold text-slate-400 font-mono">
+                                            {visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}
+                                          </span>
+                                          <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <button onClick={() => togglePassword(rowItem.id)} className="p-1 text-slate-400 hover:text-primary">
+                                              {visiblePasswords[rowItem.id] ? <EyeOff size={12} /> : <Eye size={12} />}
+                                            </button>
+                                            <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass`)} className="p-1 text-slate-400 hover:text-primary">
+                                              {copiedField === `${rowItem.id}-pass` ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
+                                            </button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="col-span-4 flex flex-col gap-1 pr-4">
+                                      <div className="flex items-center gap-2">
+                                        <Mail size={12} className="text-primary" />
+                                        <span className="text-[12px] font-black text-slate-700 dark:text-white truncate uppercase tracking-tight">
+                                          {rowItem.panelTitle || 'Senza Pannello'}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center gap-2">
+                                        <Globe size={10} className="text-slate-400" />
+                                        <span className="text-[10px] font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest truncate">
+                                          {rowItem.associated_domain || 'Nessun dominio'}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div className="col-span-2 flex flex-col gap-1">
+                                      <div className="flex items-center gap-2">
+                                        <HardDrive size={12} className="text-slate-400" />
+                                        <span className="text-[11px] font-black text-slate-700 dark:text-white">{rowItem.size_gb} GB</span>
+                                        <span className="text-[9px] font-bold text-slate-400 uppercase ml-1">v{rowItem.sql_version}</span>
+                                      </div>
+                                      <div className="flex items-center gap-1.5 group/host">
+                                        <span className="text-[10px] font-mono text-slate-400 truncate max-w-[120px]">{rowItem.hostname}</span>
+                                        <button onClick={() => copyToClipboard(rowItem.hostname, `${rowItem.id}-host`)} className="opacity-0 group-hover/host:opacity-100 p-0.5 text-slate-400 hover:text-primary transition-all">
+                                          {copiedField === `${rowItem.id}-host` ? <Check size={10} className="text-green-500" /> : <Copy size={10} />}
+                                        </button>
+                                      </div>
+                                    </div>
+                                    <div className="col-span-2">
+                                      <div className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500' :
+                                        expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
+                                          expiryColor === 'green' ? 'bg-green-500/10 text-green-500' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
+                                        {formattedDate}
+                                      </div>
+                                    </div>
+                                  </>
+                                )}
+
+                                <div className={`${activeTab === 'panels' ? 'col-span-2' : 'col-span-1'} flex justify-end gap-1`}>
+                                  {!rowItem.isGroup && (
+                                    <>
+                                      {activeTab === 'databases' && (
+                                        <button onClick={() => handleOpenSlots(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-all" title="Gestisci Slot">
+                                          <Layers size={18} />
+                                        </button>
+                                      )}
+                                      <button onClick={() => handleOpenModal(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-all" title="Modifica">
+                                        <Edit3 size={18} />
                                       </button>
-                                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button onClick={() => copyToClipboard(rowItem.sql_name, `${rowItem.id}-user`)} className="p-1 text-slate-400 hover:text-primary">
-                                          {copiedField === `${rowItem.id}-user` ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
-                                        </button>
-                                      </div>
-                                    </div>
-                                    <div className="flex items-center gap-2 group/dbpass">
-                                      <span className="text-[11px] font-bold text-slate-400 font-mono">
-                                        {visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}
-                                      </span>
-                                      <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button onClick={() => togglePassword(rowItem.id)} className="p-1 text-slate-400 hover:text-primary">
-                                          {visiblePasswords[rowItem.id] ? <EyeOff size={12} /> : <Eye size={12} />}
-                                        </button>
-                                        <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass`)} className="p-1 text-slate-400 hover:text-primary">
-                                          {copiedField === `${rowItem.id}-pass` ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                <div className="col-span-4 flex flex-col gap-1 pr-4">
-                                  <div className="flex items-center gap-2">
-                                    <Mail size={12} className="text-primary" />
-                                    <span className="text-[12px] font-black text-slate-700 dark:text-white truncate uppercase tracking-tight">
-                                      {rowItem.panelTitle || 'Senza Pannello'}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center gap-2">
-                                    <Globe size={10} className="text-slate-400" />
-                                    <span className="text-[10px] font-bold text-slate-400 dark:text-white/40 uppercase tracking-widest truncate">
-                                      {rowItem.associated_domain || 'Nessun dominio'}
-                                    </span>
-                                  </div>
-                                </div>
-                                <div className="col-span-2 flex flex-col gap-1">
-                                  <div className="flex items-center gap-2">
-                                    <HardDrive size={12} className="text-slate-400" />
-                                    <span className="text-[11px] font-black text-slate-700 dark:text-white">{rowItem.size_gb} GB</span>
-                                    <span className="text-[9px] font-bold text-slate-400 uppercase ml-1">v{rowItem.sql_version}</span>
-                                  </div>
-                                  <div className="flex items-center gap-1.5 group/host">
-                                    <span className="text-[10px] font-mono text-slate-400 truncate max-w-[120px]">{rowItem.hostname}</span>
-                                    <button onClick={() => copyToClipboard(rowItem.hostname, `${rowItem.id}-host`)} className="opacity-0 group-hover/host:opacity-100 p-0.5 text-slate-400 hover:text-primary transition-all">
-                                      {copiedField === `${rowItem.id}-host` ? <Check size={10} className="text-green-500" /> : <Copy size={10} />}
-                                    </button>
-                                  </div>
-                                </div>
-                                <div className="col-span-2">
-                                  <div className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500' :
-                                    expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
-                                      expiryColor === 'green' ? 'bg-green-500/10 text-green-500' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
-                                    {formattedDate}
-                                  </div>
-                                </div>
-                              </>
-                            )}
-
-                            <div className={`${activeTab === 'panels' ? 'col-span-2' : 'col-span-1'} flex justify-end gap-1`}>
-                              {!rowItem.isGroup && (
-                                <>
-                                  {activeTab === 'databases' && (
-                                    <button onClick={() => handleOpenSlots(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-all" title="Gestisci Slot">
-                                      <Layers size={18} />
-                                    </button>
+                                      <button onClick={() => handleDelete(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-all" title="Elimina">
+                                        <Trash2 size={18} />
+                                      </button>
+                                    </>
                                   )}
-                                  <button onClick={() => handleOpenModal(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-all" title="Modifica">
-                                    <Edit3 size={18} />
-                                  </button>
-                                  <button onClick={() => handleDelete(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-500/10 transition-all" title="Elimina">
-                                    <Trash2 size={18} />
-                                  </button>
-                                </>
-                              )}
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      );
-                    };
+                          );
+                        };
 
-                    return (
-                      <React.Fragment key={item.id}>
-                        {renderRow(item)}
-                        {item.isGroup && expandedGroups[item.id] && item.subdomains.map((child: any) => renderRow(child, true))}
+                        return (
+                          <React.Fragment key={item.id}>
+                            {renderRow(item)}
+                            {item.isGroup && expandedGroups[item.id] && item.subdomains.map((child: any) => renderRow(child, true))}
 
-                        {/* --- DATABASE SLOTS EXPANSION --- */}
-                        {activeTab === 'databases' && expandedGroups[item.id] && (
-                          <div className="bg-slate-50/50 dark:bg-white/[0.01] border-l-2 border-orange-500/20 ml-12 py-4 px-8 border-b border-slate-100 dark:border-white/5">
-                            <div className="grid grid-cols-5 gap-4">
-                              {[1, 2, 3, 4, 5].map((num) => {
-                                const slot = item.db_slots?.find((s: any) => s.slot_number === num);
-                                return (
-                                  <div key={num} className="bg-white dark:bg-black/20 p-3 rounded-2xl border border-slate-100 dark:border-white/5 flex flex-col gap-1 shadow-sm">
-                                    <div className="flex items-center justify-between">
-                                      <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Slot #{num}</span>
-                                      {slot?.content && <div className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.5)]"></div>}
-                                    </div>
-                                    <span className={`text-[10px] font-black truncate ${slot?.content ? 'text-slate-700 dark:text-white' : 'text-slate-300 dark:text-white/10'}`}>
-                                      {slot?.content || 'Libero'}
-                                    </span>
-                                    {slot?.notes && (
-                                      <span className="text-[8px] font-bold text-slate-400 truncate italic">"{slot.notes}"</span>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
-                      </React.Fragment>
-                    );
-                  })
-                ) : (
-                  <div className="p-20 text-center flex flex-col items-center gap-4">
-                    <Inbox className="text-slate-200 dark:text-white/10" size={48} />
-                    <p className="text-sm font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest">Nessun elemento trovato</p>
+                            {/* --- DATABASE SLOTS EXPANSION --- */}
+                            {activeTab === 'databases' && expandedGroups[item.id] && (
+                              <div className="bg-slate-50/50 dark:bg-white/[0.01] border-l-2 border-orange-500/20 ml-12 py-4 px-8 border-b border-slate-100 dark:border-white/5">
+                                <div className="grid grid-cols-5 gap-4">
+                                  {[1, 2, 3, 4, 5].map((num) => {
+                                    const slot = item.db_slots?.find((s: any) => s.slot_number === num);
+                                    return (
+                                      <div key={num} className="bg-white dark:bg-black/20 p-3 rounded-2xl border border-slate-100 dark:border-white/5 flex flex-col gap-1 shadow-sm">
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest">Slot #{num}</span>
+                                          {slot?.content && <div className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.5)]"></div>}
+                                        </div>
+                                        <span className={`text-[10px] font-black truncate ${slot?.content ? 'text-slate-700 dark:text-white' : 'text-slate-300 dark:text-white/10'}`}>
+                                          {slot?.content || 'Libero'}
+                                        </span>
+                                        {slot?.notes && (
+                                          <span className="text-[8px] font-bold text-slate-400 truncate italic">"{slot.notes}"</span>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+                          </React.Fragment>
+                        );
+                      })
+                    ) : (
+                      <div className="p-20 text-center flex flex-col items-center gap-4">
+                        <Inbox className="text-slate-200 dark:text-white/10" size={48} />
+                        <p className="text-sm font-black text-slate-400 dark:text-slate-400 uppercase tracking-widest">Nessun elemento trovato</p>
+                      </div>
+                    )}
                   </div>
-                )}
                 </div>
               </div>
             </div>
-          </div>
           </motion.div>
         </AnimatePresence>
       </main>
