@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
-  Plus, Search, Globe, HardDrive, Database as DbIcon, Mail, Inbox,
+  Plus, Search, Globe, Calendar, HardDrive, Database as DbIcon, Mail, Inbox,
   Trash2, Edit3, Layers, Eye, EyeOff, Copy, Check,
-  User, Lock, SortAsc, SortDesc, List, LayoutGrid, Filter, ChevronDown as ChevronDownIcon
+  User, Lock, SortAsc, SortDesc, List, LayoutGrid, Filter, FileText, ChevronDown as ChevronDownIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Swal from 'sweetalert2';
@@ -401,10 +401,8 @@ const Gestione: React.FC = () => {
                       </>
                     ) : activeTab === 'domains' ? (
                       <>
-                        <div className="col-span-3">Dominio</div>
-                        <div className="col-span-3">Associazione Pannello</div>
-                        <div className="col-span-2">Scadenza</div>
-                        <div className="col-span-3">Note</div>
+                        <div className="col-span-9">Asset & Informazioni</div>
+                        <div className="col-span-2 text-center">Scadenza</div>
                         <div className="col-span-1 text-right">Azioni</div>
                       </>
                     ) : (
@@ -423,12 +421,11 @@ const Gestione: React.FC = () => {
                       filteredItems.map((item: any) => {
                         const renderRow = (rowItem: any, isChild = false) => {
                           const expiryColor = getExpiryColor(rowItem.expiry_date);
-                          const formattedDate = rowItem.expiry_date ? new Date(rowItem.expiry_date).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' }) : 'N/D';
+                          const formattedDate = rowItem.expiry_date ? new Date(rowItem.expiry_date).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
 
                           return (
                             <div key={rowItem.id} className="transition-all">
-                              {/* --- MOBILE VIEW: Card Layout --- */}
-                              <div className={`md:hidden p-5 space-y-4 ${isChild ? 'ml-4 border-l-2 border-slate-100 dark:border-white/5 pl-4' : ''}`}>
+                              {/* --- MOBILE VIEW: Card Layout --- */}                              <div className={`md:hidden p-6 space-y-4 ${isChild ? 'ml-4 border-l-2 border-slate-100 dark:border-white/5 pl-4' : ''}`}>
                                 <div className="flex items-start justify-between">
                                   <div className={`flex items-center gap-3 ${rowItem.isGroup ? 'cursor-pointer' : ''}`} onClick={() => rowItem.isGroup && toggleGroup(rowItem.id)}>
                                     <div className={`p-3 rounded-2xl ${activeTab === 'panels' ? 'bg-primary/10 text-primary' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
@@ -439,6 +436,11 @@ const Gestione: React.FC = () => {
                                         <p className="text-sm font-black truncate text-slate-900 dark:text-white">
                                           {rowItem.title || rowItem.name || rowItem.sql_name}
                                         </p>
+                                        {!rowItem.isGroup && rowItem.notes && (
+                                          <div className="flex-shrink-0 text-slate-400">
+                                            <FileText size={12} />
+                                          </div>
+                                        )}
                                         {activeTab === 'domains' && rowItem.isGroup && (
                                           <div className="flex items-center gap-2">
                                             <span className="px-1.5 py-0.5 rounded-md bg-primary/20 text-primary text-[8px] font-black uppercase tracking-tighter whitespace-nowrap">
@@ -447,24 +449,27 @@ const Gestione: React.FC = () => {
                                             <ChevronDownIcon size={14} className={`text-slate-400 transition-transform duration-300 ${expandedGroups[rowItem.id] ? 'rotate-180' : ''}`} />
                                           </div>
                                         )}
-                                      </div>                                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                                        {rowItem.isGroup ? 'Contenitore Pannello' : 
-                                         activeTab === 'panels' ? 'Account Aruba Master' :
-                                         activeTab === 'domains' ? `${rowItem.panelTitle && !isChild ? rowItem.panelTitle + ' • ' : ''}${getDomainTypeLabel(rowItem.type)}` :
-                                         (rowItem.panelTitle || `v${rowItem.sql_version}`)}
+                                      </div>
+                                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                        {rowItem.isGroup ? 'Contenitore Pannello' :
+                                          activeTab === 'panels' ? 'Account Aruba' :
+                                            activeTab === 'domains' ? `${rowItem.panelTitle && !isChild ? rowItem.panelTitle + ' • ' : ''}${getDomainTypeLabel(rowItem.type)}` :
+                                              (rowItem.panelTitle || `v${rowItem.sql_version}`)}
                                       </p>
                                     </div>
                                   </div>
 
-                                  {/* Expiry Badge (Mobile) */}
+                                  {/* Expiry Badge (Mobile) - Uniform to Desktop */}
                                   <div>
-                                    {activeTab === 'panels' ? (
-                                      <div className="px-2 py-1 rounded-lg bg-green-500/10 text-green-500 text-[9px] font-black uppercase tracking-widest">OK</div>
-                                    ) : (
-                                      <div className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500' :
-                                        expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
-                                          'bg-slate-100 dark:bg-white/5 text-slate-400'
-                                        }`}>
+                                    {activeTab === 'panels' ? '' : rowItem.expiry_date && (
+                                      <div className={`
+                                        flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest
+                                        ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)]' :
+                                          expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
+                                            expiryColor === 'green' ? 'bg-green-500/10 text-green-500' :
+                                              'bg-slate-100 dark:bg-white/5 text-slate-400'}
+                                      `}>
+                                        <Calendar size={12} className="opacity-70" />
                                         {formattedDate}
                                       </div>
                                     )}
@@ -558,24 +563,26 @@ const Gestione: React.FC = () => {
                                   </div>
                                 )}
 
-                                {/* Action Row (Mobile) */}
-                                <div className="flex gap-2 pt-1">
-                                  {activeTab === 'databases' && !rowItem.isGroup && (
-                                    <button onClick={() => handleOpenSlots(rowItem)} className="flex-1 py-3 rounded-xl bg-primary/10 text-primary text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 min-w-0">
-                                      <Layers size={14} className="flex-shrink-0" /> <span className="truncate">Slot</span>
+                                {/* Action Row (Mobile) - Uniform to Desktop Ghost Style */}
+                                {!rowItem.isGroup && (
+                                  <div className="flex gap-2 pt-3 border-t border-slate-100 dark:border-white/5">
+                                    {activeTab === 'databases' && (
+                                      <>
+                                        <button onClick={() => handleOpenSlots(rowItem)} className="flex-1 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-all flex items-center justify-center gap-2">
+                                          <Layers size={14} /> Slot
+                                        </button>
+                                        <div className="w-px h-4 bg-slate-100 dark:bg-white/10 self-center" />
+                                      </>
+                                    )}
+                                    <button onClick={() => handleOpenModal(rowItem)} className="flex-1 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-all flex items-center justify-center gap-2">
+                                      <Edit3 size={14} /> Modifica
                                     </button>
-                                  )}
-                                  {!rowItem.isGroup && (
-                                    <>
-                                      <button onClick={() => handleOpenModal(rowItem)} className="flex-1 py-3 rounded-xl bg-slate-100 dark:bg-white/5 text-slate-500 dark:text-white/50 text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 min-w-0">
-                                        <Edit3 size={14} className="flex-shrink-0" /> <span className="truncate">Modifica</span>
-                                      </button>
-                                      <button onClick={() => handleDelete(rowItem)} className="p-3 rounded-xl bg-red-500/10 text-red-500 flex items-center justify-center flex-shrink-0">
-                                        <Trash2 size={16} />
-                                      </button>
-                                    </>
-                                  )}
-                                </div>
+                                    <div className="w-px h-4 bg-slate-100 dark:bg-white/10 self-center" />
+                                    <button onClick={() => handleDelete(rowItem)} className="flex-1 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-red-500 transition-all flex items-center justify-center gap-2">
+                                      <Trash2 size={14} /> Elimina
+                                    </button>
+                                  </div>
+                                )}
                               </div>
 
                               {/* --- DESKTOP VIEW: Grid Row --- */}
@@ -590,7 +597,7 @@ const Gestione: React.FC = () => {
                                       </div>
                                       <div className="min-w-0">
                                         <p className="text-sm font-black text-slate-900 dark:text-white truncate">{rowItem.title}</p>
-                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account Aruba Master</p>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account Aruba</p>
                                       </div>
                                     </div>
                                     <div className="col-span-6 flex items-center gap-4">
@@ -623,8 +630,8 @@ const Gestione: React.FC = () => {
                                 ) : activeTab === 'domains' ? (
                                   <>
                                     {/* Domains Layout: 3 + 3 + 2 + 3 + 1 */}
-                                    <div className={`col-span-3 flex items-center gap-4 ${isChild ? 'pl-12' : ''}`}>
-                                    <div className={`p-3 rounded-2xl ${rowItem.isGroup ? 'bg-slate-100 dark:bg-white/5 text-slate-400 cursor-pointer' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`} onClick={() => rowItem.isGroup && toggleGroup(rowItem.id)}>
+                                    <div className={`col-span-9 flex items-center gap-4 ${isChild ? 'pl-12' : ''}`}>
+                                      <div className={`p-3 rounded-2xl ${rowItem.isGroup ? 'bg-slate-100 dark:bg-white/5 text-slate-400 cursor-pointer' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`} onClick={() => rowItem.isGroup && toggleGroup(rowItem.id)}>
                                         {rowItem.isGroup ? <Layers size={18} /> : <Globe size={18} />}
                                       </div>
                                       <div className="min-w-0">
@@ -640,37 +647,26 @@ const Gestione: React.FC = () => {
                                               <ChevronDownIcon size={14} className={`text-slate-400 transition-transform ${expandedGroups[rowItem.id] ? 'rotate-180' : ''}`} />
                                             </div>
                                           )}
+                                          {!rowItem.isGroup && rowItem.notes && (
+                                            <div className="p-1 rounded-md bg-slate-100 dark:bg-white/5 text-slate-400 cursor-help" title={rowItem.notes}>
+                                              <FileText size={12} />
+                                            </div>
+                                          )}
                                         </div>
                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                                          {rowItem.isGroup ? 'Contenitore Pannello' : 
-                                           (rowItem.panelTitle && !isChild ? rowItem.panelTitle + ' • ' : '') + getDomainTypeLabel(rowItem.type)}
+                                          {rowItem.isGroup ? 'Contenitore Pannello' :
+                                            (rowItem.panelTitle && !isChild ? rowItem.panelTitle + ' • ' : '') + getDomainTypeLabel(rowItem.type)}
                                         </p>
                                       </div>
                                     </div>
-                                    <div className="col-span-3 flex items-center gap-2">
-                                      {!rowItem.isGroup && (
-                                        <>
-                                          <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-white/5 text-slate-400">
-                                            <Mail size={12} />
-                                          </div>
-                                          <span className="text-[11px] font-bold text-slate-500 dark:text-white/70 uppercase tracking-widest truncate">
-                                            {rowItem.panelTitle}
-                                          </span>
-                                        </>
-                                      )}
-                                    </div>
-                                    <div className="col-span-2">
+                                    <div className="col-span-2 flex justify-center">
                                       <div className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500' :
                                         expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
-                                          expiryColor === 'green' ? 'bg-green-500/10 text-green-500' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
+                                          expiryColor === 'green' ? 'bg-green-500/10 text-green-500' : ''}`}>
                                         {formattedDate}
                                       </div>
                                     </div>
-                                    <div className="col-span-3">
-                                      <p className="text-[11px] font-bold text-slate-400 dark:text-slate-500 line-clamp-1 italic pr-4">
-                                        {rowItem.notes ? `"${rowItem.notes}"` : <span className="opacity-20">—</span>}
-                                      </p>
-                                    </div>
+
                                   </>
                                 ) : (
                                   <>
@@ -764,10 +760,84 @@ const Gestione: React.FC = () => {
                           );
                         };
 
+                        const renderChildCard = (sub: any) => {
+                          const subExpiryColor = getExpiryColor(sub.expiry_date);
+                          const subFormattedDate = sub.expiry_date ? new Date(sub.expiry_date).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' }) : '';
+
+                          return (
+                            <motion.div
+                              key={sub.id}
+                              initial={{ opacity: 0, scale: 0.95 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="bg-white dark:bg-white/5 rounded-[2rem] p-5 border border-slate-100 dark:border-white/10 shadow-sm hover:shadow-md transition-all group/card flex flex-col gap-4"
+                            >
+                              {/* Top Section: Name & Notes */}
+                              <div className="flex items-start justify-between">
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-2">
+                                    <p className="text-[13px] font-black text-slate-900 dark:text-white truncate" title={sub.name}>{sub.name}</p>
+                                    {sub.notes && (
+                                      <div className="flex-shrink-0 cursor-help text-slate-400" title={sub.notes}>
+                                        <FileText size={12} />
+                                      </div>
+                                    )}
+                                  </div>
+                                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.1em] mt-0.5">{getDomainTypeLabel(sub.type)}</p>
+                                </div>
+                              </div>
+
+                              {/* Middle Section: Expiry (THE STAR) */}
+                              <div className="flex items-center justify-between">
+                                {sub.expiry_date ? (
+                                  <div className={`
+                                    flex items-center gap-2 px-4 py-2 rounded-xl text-[11px] font-black uppercase tracking-widest
+                                    ${subExpiryColor === 'red' ? 'bg-red-500/10 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)]' :
+                                      subExpiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
+                                        'bg-green-500/10 text-green-500'}
+                                  `}>
+                                    <Calendar size={14} className="opacity-70" />
+                                    {subFormattedDate}
+                                  </div>
+                                ) : (
+                                  <div className="h-9" /> // Spacer
+                                )}
+                              </div>
+
+                              {/* Bottom Section: Subtle Actions */}
+                              <div className="flex gap-2 pt-3 border-t border-slate-100 dark:border-white/5">
+                                <button
+                                  onClick={() => handleOpenModal(sub)}
+                                  className="flex-1 py-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors flex items-center justify-center gap-2"
+                                >
+                                  <Edit3 size={12} /> Modifica
+                                </button>
+                                <div className="w-px h-4 bg-slate-100 dark:bg-white/10 self-center" />
+                                <button
+                                  onClick={() => handleDelete(sub)}
+                                  className="flex-1 py-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-red-500 transition-colors flex items-center justify-center gap-2"
+                                >
+                                  <Trash2 size={12} /> Elimina
+                                </button>
+                              </div>
+                            </motion.div>
+                          );
+                        };
+
                         return (
                           <React.Fragment key={item.id}>
                             {renderRow(item)}
-                            {item.isGroup && expandedGroups[item.id] && item.subdomains.map((child: any) => renderRow(child, true))}
+                            {item.isGroup && expandedGroups[item.id] && (
+                              <>
+                                {/* Mobile & Tablet: Standard List */}
+                                <div className="md:hidden">
+                                  {item.subdomains.map((child: any) => renderRow(child, true))}
+                                </div>
+                                {/* Desktop: Modern Grid */}
+                                <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-6 bg-slate-50/50 dark:bg-white/[0.02] border-t border-slate-100 dark:border-white/5">
+                                  {item.subdomains.map((child: any) => renderChildCard(child))}
+                                </div>
+                              </>
+                            )}
 
                             {/* --- DATABASE SLOTS EXPANSION --- */}
                             {activeTab === 'databases' && expandedGroups[item.id] && (

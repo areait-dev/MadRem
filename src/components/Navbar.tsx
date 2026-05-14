@@ -85,7 +85,7 @@ export default function Navbar() {
     `}>
       {/* ── High-End Glass Pill ── */}
       <div className={`
-        relative w-[80%] md:w-full max-w-3xl flex items-center justify-between
+        relative w-[80%] md:w-full max-w-3xl flex items-center justify-between overflow-hidden
         transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
         backdrop-blur-xl bg-white/[0.03] dark:bg-black/20 border border-slate-200 dark:border-white/10
         ${isScrolled
@@ -152,7 +152,7 @@ export default function Navbar() {
               rounded-full overflow-hidden flex items-center justify-center transition-all duration-500
               ${isScrolled ? 'h-11 w-11' : 'h-14 w-14 md:h-14 md:w-14'}
             `}>
-              <img src={avatarUrl} alt="Profilo" className="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-700" />
+              <img src={avatarUrl} alt="Profilo" className="w-full h-full object-cover scale-100 group-hover:scale-110 transition-transform duration-700" />
             </div>
           </button>
         </div>
