@@ -78,8 +78,8 @@ const DomainForm: React.FC<DomainFormProps> = ({ panels, initialData, onSubmit, 
                 type="button"
                 onClick={() => setFormData({ ...formData, type: option.id as any })}
                 className={`flex-1 py-3 px-4 rounded-xl text-[11px] font-black uppercase tracking-widest transition-all ${formData.type === option.id
-                    ? 'bg-primary text-black shadow-lg shadow-primary/20'
-                    : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'
+                  ? 'bg-primary text-black shadow-lg shadow-primary/20'
+                  : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'
                   }`}
               >
                 {option.label}
@@ -89,7 +89,7 @@ const DomainForm: React.FC<DomainFormProps> = ({ panels, initialData, onSubmit, 
         </div>
 
         {/* Expiry */}
-        <div className="space-y-2">
+        <div className="md:col-span-2 space-y-2">
           <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">Scadenza</label>
           <div className="relative group">
             <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 pointer-events-none z-10" />
