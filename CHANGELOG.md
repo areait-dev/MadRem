@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://github.com/areait-dev/MadRem/compare/v2.2.0...v2.3.0) (2026-05-14)
+
+
+### Features
+
+* **ui:** overhaul infrastructure dashboard & navigation ([36ba578](https://github.com/areait-dev/MadRem/commit/36ba57861ba7d7941d6a88763b35fa48921f31fa))
+
 ## [2.2.0](https://github.com/areait-dev/MadRem/compare/v2.1.1...v2.2.0) (2026-05-13)
 
 
