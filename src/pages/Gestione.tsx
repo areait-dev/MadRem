@@ -402,8 +402,8 @@ const Gestione: React.FC = () => {
                     ) : activeTab === 'domains' ? (
                       <>
                         <div className="col-span-9">Asset & Informazioni</div>
-                        <div className="col-span-2 text-center">Scadenza</div>
-                        <div className="col-span-1 text-right">Azioni</div>
+                        <div className="col-span-2 text-center">{viewMode === 'compact' ? '' : 'Scadenza'}</div>
+                        <div className="col-span-1 text-right">{viewMode === 'compact' ? '' : 'Azioni'}</div>
                       </>
                     ) : (
                       <>
