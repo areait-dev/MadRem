@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.3.7](https://github.com/areait-dev/MadRem/compare/v2.3.6...v2.3.7) (2026-06-05)
+
+
+### Bug Fixes
+
+* creato main.yml per mantenimento status attivo supabase ([cd92c08](https://github.com/areait-dev/MadRem/commit/cd92c0882429f73322b9e0513f9e12b3b5d76398))
+
 ### [2.3.6](https://github.com/areait-dev/MadRem/compare/v2.3.5...v2.3.6) (2026-05-14)
 
 ### [2.3.5](https://github.com/areait-dev/MadRem/compare/v2.3.4...v2.3.5) (2026-05-14)
