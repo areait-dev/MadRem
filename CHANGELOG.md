@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://github.com/areait-dev/MadRem/compare/v2.3.7...v2.4.0) (2026-06-17)
+
+
+### Features
+
+* aggiunta del rinnovo rapido per tutti gli asset e gestione del ciclo di fatturazione per abbonamenti con allineamento delle colonne azioni e stile hover smeraldo uniforme ([5787462](https://github.com/areait-dev/MadRem/commit/57874627d6d3df5a115e3f195d404941c07f1529))
+
+
+### Bug Fixes
+
+* creato keep-alive.js per mantenimento status attivo supabase ([91dad5d](https://github.com/areait-dev/MadRem/commit/91dad5d557e898530d084b2fd0f9f6308bdf5354))
+
 ### [2.3.7](https://github.com/areait-dev/MadRem/compare/v2.3.6...v2.3.7) (2026-06-05)
 
 
