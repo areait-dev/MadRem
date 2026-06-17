@@ -8,22 +8,32 @@ import {
   ArrowUpRight,
   Clock,
   ChevronRight,
-  Calendar
+  Calendar,
+  Mail,
+  Tag
 } from 'lucide-react';
 import { useInfrastructure } from '../hooks/useInfrastructure';
-import type { ArubaPanel } from '../types';
+import type { ArubaPanel, PecEmail, Subscription } from '../types';
 
 const Dashboard: React.FC = () => {
-  const { fetchPanels } = useInfrastructure();
+  const { fetchPanels, fetchPecs, fetchSubscriptions } = useInfrastructure();
   const [panels, setPanels] = useState<ArubaPanel[]>([]);
+  const [pecs, setPecs] = useState<PecEmail[]>([]);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadData = useCallback(async () => {
     setLoading(true);
-    const data = await fetchPanels();
+    const [data, pecData, subData] = await Promise.all([
+      fetchPanels(),
+      fetchPecs(),
+      fetchSubscriptions(),
+    ]);
     setPanels(data);
+    setPecs(pecData);
+    setSubscriptions(subData);
     setLoading(false);
-  }, [fetchPanels]);
+  }, [fetchPanels, fetchPecs, fetchSubscriptions]);
 
   useEffect(() => {
     loadData();
@@ -45,9 +55,11 @@ const Dashboard: React.FC = () => {
   // Calculate real stats
   const allDomains = panels.flatMap(p => (p.domains || []).map(d => ({ ...d, panelTitle: p.title || p.email, assetType: 'Dominio' })));
   const allDatabases = panels.flatMap(p => (p.databases || []).map(db => ({ ...db, panelTitle: p.title || p.email, assetType: 'Database' })));
+  const allPecs = pecs.map(pec => ({ ...pec, name: pec.address, panelTitle: null, assetType: 'PEC' }));
+  const allSubs = subscriptions.map(sub => ({ ...sub, panelTitle: null, assetType: 'Abbonamento' }));
 
   // Combine all expiring assets (within 30 days)
-  const expiringAssets = [...allDomains, ...allDatabases]
+  const expiringAssets = [...allDomains, ...allDatabases, ...allPecs, ...allSubs]
     .filter(asset => {
       if (!asset.expiry_date) return false;
       const expiry = new Date(asset.expiry_date);
@@ -62,6 +74,8 @@ const Dashboard: React.FC = () => {
     totalPanels: panels.length,
     totalDomains: allDomains.length,
     totalDatabases: allDatabases.length,
+    totalPecs: pecs.length,
+    totalSubscriptions: subscriptions.length,
     expiringAssets: expiringAssets.length
   };
 
@@ -69,13 +83,33 @@ const Dashboard: React.FC = () => {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
+      transition: { staggerChildren: 0.08 }
     }
   };
 
   const itemVariants = {
     hidden: { y: 10, opacity: 0 },
     visible: { y: 0, opacity: 1 }
+  };
+
+  const getAssetIcon = (assetType: string) => {
+    if (assetType === 'Dominio') return <Globe size={24} />;
+    if (assetType === 'Database') return <DbIcon size={24} />;
+    if (assetType === 'PEC') return <Mail size={24} />;
+    return <Tag size={24} />;
+  };
+
+  const getAssetColor = (assetType: string) => {
+    if (assetType === 'Dominio') return 'bg-blue-500/10 text-blue-500';
+    if (assetType === 'Database') return 'bg-orange-500/10 text-orange-500';
+    if (assetType === 'PEC') return 'bg-violet-500/10 text-violet-500';
+    return 'bg-emerald-500/10 text-emerald-500';
+  };
+
+  const getAssetBadgeColor = (assetType: string) => {
+    if (assetType === 'PEC') return 'text-violet-500';
+    if (assetType === 'Abbonamento') return 'text-emerald-500';
+    return 'text-primary';
   };
 
   return (
@@ -102,23 +136,25 @@ const Dashboard: React.FC = () => {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12"
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-12"
         >
           {[
             { label: 'Pannelli', value: stats.totalPanels, icon: User, color: 'text-primary' },
-            { label: 'Domini Totali', value: stats.totalDomains, icon: Globe, color: 'text-blue-500' },
-            { label: 'Database SQL', value: stats.totalDatabases, icon: DbIcon, color: 'text-orange-500' },
-            { label: 'Asset in Scadenza', value: stats.expiringAssets, icon: Clock, color: 'text-red-500' },
+            { label: 'Domini', value: stats.totalDomains, icon: Globe, color: 'text-blue-500' },
+            { label: 'Database', value: stats.totalDatabases, icon: DbIcon, color: 'text-orange-500' },
+            { label: 'Caselle PEC', value: stats.totalPecs, icon: Mail, color: 'text-violet-500' },
+            { label: 'Abbonamenti', value: stats.totalSubscriptions, icon: Tag, color: 'text-emerald-500' },
+            { label: 'In Scadenza', value: stats.expiringAssets, icon: Clock, color: 'text-red-500' },
           ].map((stat) => (
             <motion.div
               key={stat.label}
               variants={itemVariants}
-              className="glass-card p-6 border border-slate-200 dark:border-white/5 flex flex-col justify-between h-32"
+              className="glass-card p-5 border border-slate-200 dark:border-white/5 flex flex-col justify-between h-28"
             >
               <div className="flex justify-between items-start">
-                <p className="text-[10px] font-black text-slate-400 dark:text-text-muted uppercase tracking-widest">{stat.label}</p>
+                <p className="text-[9px] font-black text-slate-400 dark:text-text-muted uppercase tracking-widest leading-tight">{stat.label}</p>
                 <div className={`${stat.color} opacity-80`}>
-                  <stat.icon size={20} />
+                  <stat.icon size={18} />
                 </div>
               </div>
               <div className="flex items-end justify-between">
@@ -131,7 +167,7 @@ const Dashboard: React.FC = () => {
           ))}
         </motion.div>
 
-        {/* ALERTS SECTION - NOW CENTRAL FOCUS */}
+        {/* ALERTS SECTION */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-widest flex items-center gap-3">
@@ -155,22 +191,28 @@ const Dashboard: React.FC = () => {
                   return (
                     <div key={asset.id} className="p-8 flex items-center justify-between gap-6 bg-white dark:bg-white/5">
                       <div className="flex items-center gap-5">
-                        <div className={`p-4 rounded-2xl ${asset.assetType === 'Dominio' ? 'bg-blue-500/10 text-blue-500' : 'bg-orange-500/10 text-orange-500'}`}>
-                          {asset.assetType === 'Dominio' ? <Globe size={24} /> : <DbIcon size={24} />}
+                        <div className={`p-4 rounded-2xl ${getAssetColor(asset.assetType)}`}>
+                          {getAssetIcon(asset.assetType)}
                         </div>
                         <div>
                           <h4 className="text-base font-black text-slate-900 dark:text-white uppercase tracking-tight mb-1">
-                            {asset.name || asset.sql_name}
+                            {asset.name || asset.sql_name || asset.address}
                           </h4>
                           <div className="flex items-center gap-2">
-                            <span className="text-[10px] font-bold text-slate-400 dark:text-text-muted uppercase tracking-widest">{asset.panelTitle}</span>
-                            <ChevronRight size={10} className="text-slate-300" />
-                            <span className="text-[10px] font-black text-primary uppercase">{asset.assetType}</span>
+                            {asset.panelTitle && (
+                              <>
+                                <span className="text-[10px] font-bold text-slate-400 dark:text-text-muted uppercase tracking-widest">{asset.panelTitle}</span>
+                                <ChevronRight size={10} className="text-slate-300" />
+                              </>
+                            )}
+                            <span className={`text-[10px] font-black uppercase ${getAssetBadgeColor(asset.assetType)}`}>
+                              {asset.assetType}
+                            </span>
                           </div>
                         </div>
                       </div>
 
-                      <div className="text-right">
+                      <div className="text-right shrink-0">
                         <div className={`flex items-center justify-end gap-2 text-[13px] font-black uppercase tracking-wider ${isExpired ? 'text-red-500' : diffDays < 10 ? 'text-red-400' : 'text-orange-500'}`}>
                           <Calendar size={14} />
                           {new Date(asset.expiry_date!).toLocaleDateString('it-IT')}

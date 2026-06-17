@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Plus, Search, Globe, Calendar, HardDrive, Database as DbIcon, Mail, Inbox,
   Trash2, Edit3, Layers, Eye, EyeOff, Copy, Check,
-  User, Lock, SortAsc, SortDesc, List, LayoutGrid, Filter, FileText, ChevronDown as ChevronDownIcon
+  User, Lock, SortAsc, SortDesc, List, LayoutGrid, Filter, FileText, ChevronDown as ChevronDownIcon, Tag, RefreshCw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Swal from 'sweetalert2';
@@ -11,10 +11,12 @@ import PanelForm from '../components/PanelForm';
 import DomainForm from '../components/DomainForm';
 import DatabaseForm from '../components/DatabaseForm';
 import DatabaseSlots from '../components/DatabaseSlots';
+import PecForm from '../components/PecForm';
+import SubscriptionForm from '../components/SubscriptionForm';
 import { useInfrastructure } from '../hooks/useInfrastructure';
-import type { ArubaPanel, Database } from '../types';
+import type { ArubaPanel, Domain, Database, PecEmail, Subscription } from '../types';
 
-type TabType = 'panels' | 'domains' | 'databases';
+type TabType = 'panels' | 'domains' | 'databases' | 'pec' | 'subscriptions';
 
 const isDark = () => document.documentElement.classList.contains('dark');
 
@@ -93,15 +95,23 @@ const Gestione: React.FC = () => {
     fetchPanels,
     addPanel, updatePanel, deletePanel,
     addDomain, updateDomain, deleteDomain,
-    addDatabase, updateDatabase, deleteDatabase
+    addDatabase, updateDatabase, deleteDatabase,
+    fetchPecs, addPec, updatePec, deletePec,
+    fetchSubscriptions, addSubscription, updateSubscription, deleteSubscription,
   } = useInfrastructure();
 
   const [panels, setPanels] = useState<ArubaPanel[]>([]);
+  const [pecs, setPecs] = useState<PecEmail[]>([]);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
 
   const loadData = useCallback(async () => {
     const data = await fetchPanels();
     setPanels(data);
-  }, [fetchPanels]);
+    const pecData = await fetchPecs();
+    setPecs(pecData);
+    const subData = await fetchSubscriptions();
+    setSubscriptions(subData);
+  }, [fetchPanels, fetchPecs, fetchSubscriptions]);
 
   useEffect(() => {
     loadData();
@@ -115,6 +125,8 @@ const Gestione: React.FC = () => {
     { id: 'panels', label: 'Account', icon: User, count: panels.length },
     { id: 'domains', label: 'Domini', icon: Globe, count: allDomains.length },
     { id: 'databases', label: 'Database', icon: DbIcon, count: allDatabases.length },
+    { id: 'pec', label: 'PEC', icon: Mail, count: pecs.length },
+    { id: 'subscriptions', label: 'Abbonamenti', icon: Tag, count: subscriptions.length },
   ];
 
   const handleOpenModal = (item: any = null) => {
@@ -155,6 +167,12 @@ const Gestione: React.FC = () => {
       } else if (activeTab === 'databases') {
         if (editingItem) await updateDatabase(editingItem.id, data);
         else await addDatabase(data);
+      } else if (activeTab === 'pec') {
+        if (editingItem) await updatePec(editingItem.id, data);
+        else await addPec(data);
+      } else if (activeTab === 'subscriptions') {
+        if (editingItem) await updateSubscription(editingItem.id, data);
+        else await addSubscription(data);
       }
 
       Toast.fire({ title: 'Salvato!' });
@@ -173,8 +191,8 @@ const Gestione: React.FC = () => {
   };
 
   const handleDelete = async (item: any) => {
-    const type = activeTab === 'panels' ? 'Pannello' : activeTab === 'domains' ? 'Dominio' : 'Database';
-    const name = item.title || item.name || item.sql_name;
+    const type = activeTab === 'panels' ? 'Pannello' : activeTab === 'domains' ? 'Dominio' : activeTab === 'databases' ? 'Database' : activeTab === 'pec' ? 'PEC' : 'Abbonamento';
+    const name = item.title || item.name || item.sql_name || item.address;
     const result = await confirmDialog(type, name);
 
     if (result.isConfirmed) {
@@ -182,6 +200,8 @@ const Gestione: React.FC = () => {
         if (activeTab === 'panels') await deletePanel(item.id);
         else if (activeTab === 'domains') await deleteDomain(item.id);
         else if (activeTab === 'databases') await deleteDatabase(item.id);
+        else if (activeTab === 'pec') await deletePec(item.id);
+        else if (activeTab === 'subscriptions') await deleteSubscription(item.id);
 
         Toast.fire({ title: 'Eliminato!' });
         loadData();
@@ -196,11 +216,128 @@ const Gestione: React.FC = () => {
     }
   };
 
-  const filteredItems = useMemo(() => {
-    let items: any[] = activeTab === 'panels' ? panels : activeTab === 'domains' ? allDomains : allDatabases;
+  const handleRenewSubscription = async (sub: Subscription) => {
+    try {
+      const today = new Date();
+      let baseDate = sub.expiry_date ? new Date(sub.expiry_date) : today;
+      if (baseDate < today) {
+        baseDate = today;
+      }
 
-    // Apply Panel Filter
-    if (selectedPanel !== 'all' && activeTab !== 'panels') {
+      const monthsToAdd =
+        sub.billing_cycle === '1m' ? 1 :
+        sub.billing_cycle === '3m' ? 3 :
+        sub.billing_cycle === '6m' ? 6 : 12;
+
+      const newDate = new Date(baseDate);
+      newDate.setMonth(newDate.getMonth() + monthsToAdd);
+      const newExpiryDate = newDate.toISOString().split('T')[0];
+
+      await updateSubscription(sub.id, { expiry_date: newExpiryDate });
+      Toast.fire({ title: 'Abbonamento Rinnovato!' });
+      loadData();
+    } catch (err: any) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Errore durante il rinnovo',
+        text: err.message,
+        confirmButtonColor: '#F7BE00',
+        background: isDark() ? '#1a1a1a' : '#fff',
+        color: isDark() ? '#fff' : '#1e293b',
+      });
+    }
+  };
+
+  const handleRenewDomain = async (domain: Domain) => {
+    try {
+      const today = new Date();
+      let baseDate = domain.expiry_date ? new Date(domain.expiry_date) : today;
+      if (baseDate < today) {
+        baseDate = today;
+      }
+
+      const newDate = new Date(baseDate);
+      newDate.setFullYear(newDate.getFullYear() + 1);
+      const newExpiryDate = newDate.toISOString().split('T')[0];
+
+      await updateDomain(domain.id, { expiry_date: newExpiryDate });
+      Toast.fire({ title: 'Dominio Rinnovato!' });
+      loadData();
+    } catch (err: any) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Errore durante il rinnovo',
+        text: err.message,
+        confirmButtonColor: '#F7BE00',
+        background: isDark() ? '#1a1a1a' : '#fff',
+        color: isDark() ? '#fff' : '#1e293b',
+      });
+    }
+  };
+
+  const handleRenewDatabase = async (db: Database) => {
+    try {
+      const today = new Date();
+      let baseDate = db.expiry_date ? new Date(db.expiry_date) : today;
+      if (baseDate < today) {
+        baseDate = today;
+      }
+
+      const newDate = new Date(baseDate);
+      newDate.setFullYear(newDate.getFullYear() + 1);
+      const newExpiryDate = newDate.toISOString().split('T')[0];
+
+      await updateDatabase(db.id, { expiry_date: newExpiryDate });
+      Toast.fire({ title: 'Database Rinnovato!' });
+      loadData();
+    } catch (err: any) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Errore durante il rinnovo',
+        text: err.message,
+        confirmButtonColor: '#F7BE00',
+        background: isDark() ? '#1a1a1a' : '#fff',
+        color: isDark() ? '#fff' : '#1e293b',
+      });
+    }
+  };
+
+  const handleRenewPec = async (pec: PecEmail) => {
+    try {
+      const today = new Date();
+      let baseDate = pec.expiry_date ? new Date(pec.expiry_date) : today;
+      if (baseDate < today) {
+        baseDate = today;
+      }
+
+      const newDate = new Date(baseDate);
+      newDate.setFullYear(newDate.getFullYear() + 1);
+      const newExpiryDate = newDate.toISOString().split('T')[0];
+
+      await updatePec(pec.id, { expiry_date: newExpiryDate });
+      Toast.fire({ title: 'PEC Rinnovata!' });
+      loadData();
+    } catch (err: any) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Errore durante il rinnovo',
+        text: err.message,
+        confirmButtonColor: '#F7BE00',
+        background: isDark() ? '#1a1a1a' : '#fff',
+        color: isDark() ? '#fff' : '#1e293b',
+      });
+    }
+  };
+
+  const filteredItems = useMemo(() => {
+    let items: any[] = activeTab === 'panels' ? panels
+      : activeTab === 'domains' ? allDomains
+        : activeTab === 'databases' ? allDatabases
+          : activeTab === 'pec' ? pecs
+            : subscriptions;
+
+    // Apply Panel Filter (not for pec, subscriptions or panels tabs)
+    if (selectedPanel !== 'all' && activeTab !== 'panels' && activeTab !== 'pec' && activeTab !== 'subscriptions') {
       items = items.filter((item: any) => item.panel_id === selectedPanel);
     }
 
@@ -208,7 +345,7 @@ const Gestione: React.FC = () => {
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       items = items.filter((item: any) =>
-        (item.title || item.name || item.sql_name || '').toLowerCase().includes(query) ||
+        (item.title || item.name || item.sql_name || item.address || '').toLowerCase().includes(query) ||
         (item.email || item.hostname || '').toLowerCase().includes(query) ||
         (item.panelTitle || '').toLowerCase().includes(query) ||
         (item.associated_domain || '').toLowerCase().includes(query)
@@ -257,11 +394,13 @@ const Gestione: React.FC = () => {
       if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
-  }, [activeTab, panels, allDomains, allDatabases, selectedPanel, searchQuery, viewMode, sortBy, sortOrder]);
+  }, [activeTab, panels, allDomains, allDatabases, pecs, subscriptions, selectedPanel, searchQuery, viewMode, sortBy, sortOrder]);
 
   const toggleGroup = (id: string) => {
     setExpandedGroups(prev => ({ ...prev, [id]: !prev[id] }));
   };
+
+  const buttonLabel = activeTab === 'panels' ? 'Pannello' : activeTab === 'domains' ? 'Dominio' : activeTab === 'databases' ? 'Database' : activeTab === 'pec' ? 'PEC' : 'Abbonamento';
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-[#0a0a0a] pt-10 pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto transition-colors duration-500">
@@ -274,7 +413,7 @@ const Gestione: React.FC = () => {
             <p className="text-slate-500 dark:text-slate-400 font-bold text-sm tracking-widest uppercase opacity-70">Controllo centralizzato dell'infrastruttura</p>
           </div>
           <button onClick={() => handleOpenModal()} className="btn-primary flex items-center justify-center gap-2 px-6 py-3 text-xs font-black uppercase tracking-widest">
-            <Plus size={18} /> Nuovo {activeTab === 'panels' ? 'Pannello' : activeTab === 'domains' ? 'Dominio' : 'Database'}
+            <Plus size={18} /> Nuovo {buttonLabel}
           </button>
         </div>
 
@@ -314,7 +453,6 @@ const Gestione: React.FC = () => {
                   </button>
                 </div>
               )}
-
               {/* Contextual Sorting */}
               <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full overflow-hidden shrink-0">
                 <button
@@ -349,7 +487,7 @@ const Gestione: React.FC = () => {
               </div>
 
               {/* Panel Filter - Contextual */}
-              {activeTab !== 'panels' && (
+              {activeTab !== 'panels' && activeTab !== 'pec' && activeTab !== 'subscriptions' && (
                 <div className="relative group w-full md:w-auto shrink-0">
                   <select
                     value={selectedPanel}
@@ -374,7 +512,7 @@ const Gestione: React.FC = () => {
               <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
               <input
                 type="text"
-                placeholder={`Cerca tra ${activeTab === 'panels' ? 'i pannelli' : activeTab === 'domains' ? 'i domini' : 'i database'}...`}
+                placeholder={`Cerca tra ${activeTab === 'panels' ? 'i pannelli' : activeTab === 'domains' ? 'i domini' : activeTab === 'databases' ? 'i database' : activeTab === 'pec' ? 'le PEC' : 'gli abbonamenti'}...`}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-14 pr-6 py-4 bg-transparent border-transparent rounded-full text-base font-black uppercase tracking-widest outline-none transition-all placeholder:text-slate-400/60"
@@ -401,17 +539,29 @@ const Gestione: React.FC = () => {
                       </>
                     ) : activeTab === 'domains' ? (
                       <>
-                        <div className="col-span-9">Asset & Informazioni</div>
+                        <div className="col-span-8">Asset & Informazioni</div>
                         <div className="col-span-2 text-center">{viewMode === 'compact' ? '' : 'Scadenza'}</div>
-                        <div className="col-span-1 text-right">{viewMode === 'compact' ? '' : 'Azioni'}</div>
+                        <div className="col-span-2 text-right">{viewMode === 'compact' ? '' : 'Azioni'}</div>
+                      </>
+                    ) : activeTab === 'databases' ? (
+                      <>
+                        <div className="col-span-3">Database & Accesso</div>
+                        <div className="col-span-3"> Pannello & Dominio</div>
+                        <div className="col-span-2">Hostname & GB</div>
+                        <div className="col-span-2">Scadenza</div>
+                        <div className="col-span-2 text-right">Azioni</div>
+                      </>
+                    ) : activeTab === 'pec' ? (
+                      <>
+                        <div className="col-span-6">Indirizzo PEC</div>
+                        <div className="col-span-4">Scadenza</div>
+                        <div className="col-span-2 text-right">Azioni</div>
                       </>
                     ) : (
                       <>
-                        <div className="col-span-3">Database & Accesso</div>
-                        <div className="col-span-4"> Pannello & Dominio</div>
-                        <div className="col-span-2">Hostname & GB</div>
-                        <div className="col-span-2">Scadenza</div>
-                        <div className="col-span-1 text-right">Azioni</div>
+                        <div className="col-span-6">Nome Abbonamento</div>
+                        <div className="col-span-4">Scadenza</div>
+                        <div className="col-span-2 text-right">Azioni</div>
                       </>
                     )}
                   </div>
@@ -428,13 +578,13 @@ const Gestione: React.FC = () => {
                               {/* --- MOBILE VIEW: Card Layout --- */}                              <div className={`md:hidden p-6 space-y-4 ${isChild ? 'ml-4 border-l-2 border-slate-100 dark:border-white/5 pl-4' : ''}`}>
                                 <div className="flex items-start justify-between">
                                   <div className={`flex items-center gap-3 ${rowItem.isGroup ? 'cursor-pointer' : ''}`} onClick={() => rowItem.isGroup && toggleGroup(rowItem.id)}>
-                                    <div className={`p-3 rounded-2xl ${activeTab === 'panels' ? 'bg-primary/10 text-primary' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
-                                      {activeTab === 'panels' ? <User size={18} /> : (activeTab === 'domains' && rowItem.isGroup) ? <Layers size={18} /> : activeTab === 'domains' ? <Globe size={18} /> : <DbIcon size={18} />}
+                                    <div className={`p-3 rounded-2xl ${activeTab === 'panels' ? 'bg-primary/10 text-primary' : activeTab === 'pec' ? 'bg-violet-500/10 text-violet-500' : activeTab === 'subscriptions' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
+                                      {activeTab === 'panels' ? <User size={18} /> : activeTab === 'pec' ? <Mail size={18} /> : activeTab === 'subscriptions' ? <Tag size={18} /> : (activeTab === 'domains' && rowItem.isGroup) ? <Layers size={18} /> : activeTab === 'domains' ? <Globe size={18} /> : <DbIcon size={18} />}
                                     </div>
                                     <div className="min-w-0">
                                       <div className="flex items-center gap-2">
                                         <p className="text-sm font-black truncate text-slate-900 dark:text-white">
-                                          {rowItem.title || rowItem.name || rowItem.sql_name}
+                                          {rowItem.title || rowItem.name || rowItem.sql_name || rowItem.address}
                                         </p>
                                         {!rowItem.isGroup && rowItem.notes && (
                                           <div className="flex-shrink-0 text-slate-400">
@@ -453,8 +603,10 @@ const Gestione: React.FC = () => {
                                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                                         {rowItem.isGroup ? 'Contenitore Pannello' :
                                           activeTab === 'panels' ? 'Account' :
-                                            activeTab === 'domains' ? `${rowItem.panelTitle && !isChild ? rowItem.panelTitle + ' • ' : ''}${getDomainTypeLabel(rowItem.type)}` :
-                                              (rowItem.panelTitle || `v${rowItem.sql_version}`)}
+                                            activeTab === 'pec' ? 'Casella PEC' :
+                                              activeTab === 'subscriptions' ? `Abbonamento ${rowItem.billing_cycle === '1m' ? '• Mensile' : rowItem.billing_cycle === '3m' ? '• Trimestrale' : rowItem.billing_cycle === '6m' ? '• Semestrale' : rowItem.billing_cycle === '1y' ? '• Annuale' : ''}` :
+                                                activeTab === 'domains' ? `${rowItem.panelTitle && !isChild ? rowItem.panelTitle + ' • ' : ''}${getDomainTypeLabel(rowItem.type)}` :
+                                                  (rowItem.panelTitle || `v${rowItem.sql_version}`)}
                                       </p>
                                     </div>
                                   </div>
@@ -479,7 +631,17 @@ const Gestione: React.FC = () => {
                                 {/* Credentials / Details (Mobile) */}
                                 {(!(activeTab === 'domains' && rowItem.isGroup)) && (
                                   <div className="bg-slate-50 dark:bg-black/20 rounded-[2rem] p-4 space-y-3">
-                                    {activeTab === 'domains' ? (
+                                    {activeTab === 'pec' ? (
+                                      <div className="flex items-center gap-2">
+                                        <Mail size={12} className="text-violet-500" />
+                                        <span className="text-[11px] font-bold text-slate-600 dark:text-white/80 truncate">{rowItem.address}</span>
+                                      </div>
+                                    ) : activeTab === 'subscriptions' ? (
+                                      <div className="flex items-center gap-2">
+                                        <Tag size={12} className="text-emerald-500" />
+                                        <span className="text-[11px] font-bold text-slate-600 dark:text-white/80 truncate">{rowItem.name}</span>
+                                      </div>
+                                    ) : activeTab === 'domains' ? (
                                       <div className="flex items-center gap-2">
                                         <span className="text-[10px] font-bold text-slate-400 uppercase">Pannello:</span>
                                         <span className="text-[10px] font-black text-slate-600 dark:text-white/70 uppercase tracking-widest">{rowItem.panelTitle}</span>
@@ -574,6 +736,38 @@ const Gestione: React.FC = () => {
                                         <div className="w-px h-4 bg-slate-100 dark:bg-white/10 self-center" />
                                       </>
                                     )}
+                                    {activeTab === 'domains' && (
+                                      <>
+                                        <button onClick={() => handleRenewDomain(rowItem)} className="flex-1 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-500 transition-all flex items-center justify-center gap-2">
+                                          <RefreshCw size={14} /> Rinnova
+                                        </button>
+                                        <div className="w-px h-4 bg-slate-100 dark:bg-white/10 self-center" />
+                                      </>
+                                    )}
+                                    {activeTab === 'databases' && (
+                                      <>
+                                        <button onClick={() => handleRenewDatabase(rowItem)} className="flex-1 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-500 transition-all flex items-center justify-center gap-2">
+                                          <RefreshCw size={14} /> Rinnova
+                                        </button>
+                                        <div className="w-px h-4 bg-slate-100 dark:bg-white/10 self-center" />
+                                      </>
+                                    )}
+                                    {activeTab === 'pec' && (
+                                      <>
+                                        <button onClick={() => handleRenewPec(rowItem)} className="flex-1 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-500 transition-all flex items-center justify-center gap-2">
+                                          <RefreshCw size={14} /> Rinnova
+                                        </button>
+                                        <div className="w-px h-4 bg-slate-100 dark:bg-white/10 self-center" />
+                                      </>
+                                    )}
+                                    {activeTab === 'subscriptions' && (
+                                      <>
+                                        <button onClick={() => handleRenewSubscription(rowItem)} className="flex-1 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-500 transition-all flex items-center justify-center gap-2">
+                                          <RefreshCw size={14} /> Rinnova
+                                        </button>
+                                        <div className="w-px h-4 bg-slate-100 dark:bg-white/10 self-center" />
+                                      </>
+                                    )}
                                     <button onClick={() => handleOpenModal(rowItem)} className="flex-1 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-all flex items-center justify-center gap-2">
                                       <Edit3 size={14} /> Modifica
                                     </button>
@@ -630,7 +824,7 @@ const Gestione: React.FC = () => {
                                 ) : activeTab === 'domains' ? (
                                   <>
                                     {/* Domains Layout: 3 + 3 + 2 + 3 + 1 */}
-                                    <div className={`col-span-9 flex items-center gap-4 ${isChild ? 'pl-12' : ''}`}>
+                                    <div className={`col-span-8 flex items-center gap-4 ${isChild ? 'pl-12' : ''}`}>
                                       <div className={`p-3 rounded-2xl ${rowItem.isGroup ? 'bg-slate-100 dark:bg-white/5 text-slate-400 cursor-pointer' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`} onClick={() => rowItem.isGroup && toggleGroup(rowItem.id)}>
                                         {rowItem.isGroup ? <Layers size={18} /> : <Globe size={18} />}
                                       </div>
@@ -668,7 +862,7 @@ const Gestione: React.FC = () => {
                                     </div>
 
                                   </>
-                                ) : (
+                                ) : activeTab === 'databases' ? (
                                   <>
                                     {/* Databases Layout: 3 + 4 + 2 + 2 + 1 */}
                                     <div className="col-span-3 flex items-center gap-4">
@@ -701,7 +895,7 @@ const Gestione: React.FC = () => {
                                         </div>
                                       </div>
                                     </div>
-                                    <div className="col-span-4 flex flex-col gap-1 pr-4">
+                                    <div className="col-span-3 flex flex-col gap-1 pr-4">
                                       <div className="flex items-center gap-2">
                                         <Mail size={12} className="text-primary" />
                                         <span className="text-[12px] font-black text-slate-700 dark:text-white truncate uppercase tracking-tight">
@@ -736,14 +930,98 @@ const Gestione: React.FC = () => {
                                       </div>
                                     </div>
                                   </>
+                                ) : activeTab === 'pec' ? (
+                                  <>
+                                    {/* PEC Layout: 6 + 4 + 2 */}
+                                    <div className="col-span-6 flex items-center gap-4">
+                                      <div className="p-3 rounded-2xl bg-violet-500/10 text-violet-500">
+                                        <Mail size={18} />
+                                      </div>
+                                      <div className="min-w-0 flex-1">
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-sm font-black text-slate-900 dark:text-white truncate">
+                                            {rowItem.address}
+                                          </span>
+                                          <button
+                                            onClick={() => copyToClipboard(rowItem.address, `${rowItem.id}-pec`)}
+                                            className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-primary transition-all"
+                                          >
+                                            {copiedField === `${rowItem.id}-pec` ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
+                                          </button>
+                                        </div>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Casella PEC</p>
+                                      </div>
+                                    </div>
+                                    <div className="col-span-4">
+                                      <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500 shadow-[0_0_12px_rgba(239,68,68,0.1)]' :
+                                        expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
+                                          expiryColor === 'green' ? 'bg-green-500/10 text-green-500' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
+                                        <Calendar size={12} className="opacity-70" />
+                                        {formattedDate || 'Non impostata'}
+                                      </div>
+                                    </div>
+                                  </>
+                                ) : (
+                                  <>
+                                    {/* Subscriptions Layout: 6 + 4 + 2 */}
+                                    <div className="col-span-6 flex items-center gap-4">
+                                      <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-500">
+                                        <Tag size={18} />
+                                      </div>
+                                      <div className="min-w-0 flex-1">
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-sm font-black text-slate-900 dark:text-white truncate">
+                                            {rowItem.name}
+                                          </span>
+                                          <button
+                                            onClick={() => copyToClipboard(rowItem.name, `${rowItem.id}-sub`)}
+                                            className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-primary transition-all"
+                                          >
+                                            {copiedField === `${rowItem.id}-sub` ? <Check size={12} className="text-green-500" /> : <Copy size={12} />}
+                                          </button>
+                                        </div>
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                          Abbonamento {rowItem.billing_cycle === '1m' ? '• Mensile' : rowItem.billing_cycle === '3m' ? '• Trimestrale' : rowItem.billing_cycle === '6m' ? '• Semestrale' : rowItem.billing_cycle === '1y' ? '• Annuale' : ''}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <div className="col-span-4">
+                                      <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500 shadow-[0_0_12px_rgba(239,68,68,0.1)]' :
+                                        expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
+                                          expiryColor === 'green' ? 'bg-green-500/10 text-green-500' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
+                                        <Calendar size={12} className="opacity-70" />
+                                        {formattedDate || 'Non impostata'}
+                                      </div>
+                                    </div>
+                                  </>
                                 )}
 
-                                <div className={`${activeTab === 'panels' ? 'col-span-2' : 'col-span-1'} flex justify-end gap-1`}>
+                                <div className="col-span-2 flex justify-end gap-1">
                                   {!rowItem.isGroup && (
                                     <>
                                       {activeTab === 'databases' && (
                                         <button onClick={() => handleOpenSlots(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-all" title="Gestisci Slot">
                                           <Layers size={18} />
+                                        </button>
+                                      )}
+                                      {activeTab === 'domains' && (
+                                        <button onClick={() => handleRenewDomain(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 transition-all" title="Rinnova Dominio">
+                                          <RefreshCw size={18} />
+                                        </button>
+                                      )}
+                                      {activeTab === 'databases' && (
+                                        <button onClick={() => handleRenewDatabase(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 transition-all" title="Rinnova Database">
+                                          <RefreshCw size={18} />
+                                        </button>
+                                      )}
+                                      {activeTab === 'pec' && (
+                                        <button onClick={() => handleRenewPec(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 transition-all" title="Rinnova PEC">
+                                          <RefreshCw size={18} />
+                                        </button>
+                                      )}
+                                      {activeTab === 'subscriptions' && (
+                                        <button onClick={() => handleRenewSubscription(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 transition-all" title="Rinnova Abbonamento">
+                                          <RefreshCw size={18} />
                                         </button>
                                       )}
                                       <button onClick={() => handleOpenModal(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-all" title="Modifica">
@@ -805,6 +1083,13 @@ const Gestione: React.FC = () => {
 
                               {/* Bottom Section: Subtle Actions */}
                               <div className="flex gap-2 pt-3 border-t border-slate-100 dark:border-white/5">
+                                <button
+                                  onClick={() => handleRenewDomain(sub)}
+                                  className="flex-1 py-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-500 transition-colors flex items-center justify-center gap-2"
+                                >
+                                  <RefreshCw size={12} /> Rinnova
+                                </button>
+                                <div className="w-px h-4 bg-slate-100 dark:bg-white/10 self-center" />
                                 <button
                                   onClick={() => handleOpenModal(sub)}
                                   className="flex-1 py-1.5 text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors flex items-center justify-center gap-2"
@@ -884,7 +1169,7 @@ const Gestione: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title={editingItem ? 'Modifica Asset' : `Nuovo ${activeTab === 'panels' ? 'Pannello' : activeTab === 'domains' ? 'Dominio' : 'Database'}`}
+        title={editingItem ? 'Modifica Asset' : `Nuovo ${buttonLabel}`}
       >
         {activeTab === 'panels' && (
           <PanelForm initialData={editingItem} onSubmit={handleSave} loading={loading} />
@@ -894,6 +1179,12 @@ const Gestione: React.FC = () => {
         )}
         {activeTab === 'databases' && (
           <DatabaseForm panels={panels} initialData={editingItem} onSubmit={handleSave} loading={loading} />
+        )}
+        {activeTab === 'pec' && (
+          <PecForm initialData={editingItem} onSubmit={handleSave} loading={loading} />
+        )}
+        {activeTab === 'subscriptions' && (
+          <SubscriptionForm initialData={editingItem} onSubmit={handleSave} loading={loading} />
         )}
       </Modal>
 

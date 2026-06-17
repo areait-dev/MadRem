@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase } from './supabaseClient';
-import type { ArubaPanel, Domain, Database } from '../types';
+import type { ArubaPanel, Domain, Database, PecEmail, Subscription } from '../types';
 import { useAuth } from './useAuth';
 
 export function useInfrastructure() {
@@ -24,6 +24,40 @@ export function useInfrastructure() {
       return [];
     }
     return data as ArubaPanel[];
+  }, [user]);
+
+  const fetchPecs = useCallback(async () => {
+    if (!user) return [];
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('pec_emails')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    setLoading(false);
+    if (error) {
+      setError(error.message);
+      return [];
+    }
+    return data as PecEmail[];
+  }, [user]);
+
+  const fetchSubscriptions = useCallback(async () => {
+    if (!user) return [];
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false });
+
+    setLoading(false);
+    if (error) {
+      setError(error.message);
+      return [];
+    }
+    return data as Subscription[];
   }, [user]);
 
   const addPanel = async (panel: Partial<ArubaPanel>) => {
@@ -129,6 +163,72 @@ export function useInfrastructure() {
     if (error) throw error;
   };
 
+  // --- PEC Emails ---
+  const addPec = async (pec: Partial<PecEmail>) => {
+    if (!user) return null;
+    const { data, error } = await supabase
+      .from('pec_emails')
+      .insert([{ ...pec, user_id: user.id }])
+      .select()
+      .single();
+    if (error) throw error;
+    return data as PecEmail;
+  };
+
+  const updatePec = async (id: string, updates: Partial<PecEmail>) => {
+    const { data, error } = await supabase
+      .from('pec_emails')
+      .update(updates)
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data as PecEmail;
+  };
+
+  const deletePec = async (id: string) => {
+    const { error } = await supabase
+      .from('pec_emails')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id);
+    if (error) throw error;
+  };
+
+  // --- Subscriptions ---
+  const addSubscription = async (sub: Partial<Subscription>) => {
+    if (!user) return null;
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .insert([{ ...sub, user_id: user.id }])
+      .select()
+      .single();
+    if (error) throw error;
+    return data as Subscription;
+  };
+
+  const updateSubscription = async (id: string, updates: Partial<Subscription>) => {
+    const { data, error } = await supabase
+      .from('subscriptions')
+      .update(updates)
+      .eq('id', id)
+      .eq('user_id', user.id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data as Subscription;
+  };
+
+  const deleteSubscription = async (id: string) => {
+    const { error } = await supabase
+      .from('subscriptions')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', user.id);
+    if (error) throw error;
+  };
+
   // --- Slots ---
   const upsertDBSlots = async (databaseId: string, slots: { slot_number: number, content: string | null, notes: string | null }[]) => {
     if (!user) return null;
@@ -163,6 +263,14 @@ export function useInfrastructure() {
     addDatabase,
     updateDatabase,
     deleteDatabase,
-    upsertDBSlots
+    upsertDBSlots,
+    fetchPecs,
+    addPec,
+    updatePec,
+    deletePec,
+    fetchSubscriptions,
+    addSubscription,
+    updateSubscription,
+    deleteSubscription,
   };
 }
