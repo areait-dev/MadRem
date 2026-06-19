@@ -1,7 +1,7 @@
 {
   "name": "madroomreminder",
   "private": true,
-  "version": "2.4.2",
+  "version": "2.5.0",
   "releaseDate": "2026-06-19",
   "type": "module",
   "scripts": {

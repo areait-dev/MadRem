@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.5.0](https://github.com/areait-dev/MadRem/compare/v2.4.1...v2.5.0) (2026-06-19)
+
+
+### Features
+
+* aggiunto campo password alla gestione pec ([2b26cbf](https://github.com/areait-dev/MadRem/commit/2b26cbf1dbf65611c7b1dfd30c776038a6ddb982))
+
 ### [2.4.1](https://github.com/areait-dev/MadRem/compare/v2.4.0...v2.4.1) (2026-06-17)
 
 ## [2.4.0](https://github.com/areait-dev/MadRem/compare/v2.3.7...v2.4.0) (2026-06-17)
