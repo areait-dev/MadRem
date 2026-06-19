@@ -553,8 +553,9 @@ const Gestione: React.FC = () => {
                       </>
                     ) : activeTab === 'pec' ? (
                       <>
-                        <div className="col-span-6">Indirizzo PEC</div>
-                        <div className="col-span-4">Scadenza</div>
+                        <div className="col-span-4">Indirizzo PEC</div>
+                        <div className="col-span-4">Password Accesso</div>
+                        <div className="col-span-2">Scadenza</div>
                         <div className="col-span-2 text-right">Azioni</div>
                       </>
                     ) : (
@@ -632,9 +633,28 @@ const Gestione: React.FC = () => {
                                 {(!(activeTab === 'domains' && rowItem.isGroup)) && (
                                   <div className="bg-slate-50 dark:bg-black/20 rounded-[2rem] p-4 space-y-3">
                                     {activeTab === 'pec' ? (
-                                      <div className="flex items-center gap-2">
-                                        <Mail size={12} className="text-violet-500" />
-                                        <span className="text-[11px] font-bold text-slate-600 dark:text-white/80 truncate">{rowItem.address}</span>
+                                      <div className="space-y-3">
+                                        <div className="flex items-center justify-between group/mobcred" onClick={() => copyToClipboard(rowItem.address, `${rowItem.id}-user-mob`)}>
+                                          <div className="flex items-center gap-2 overflow-hidden">
+                                            <Mail size={12} className="text-violet-500 flex-shrink-0" />
+                                            <span className="text-[11px] font-bold text-slate-600 dark:text-white/80 truncate">{rowItem.address}</span>
+                                          </div>
+                                          {copiedField === `${rowItem.id}-user-mob` ? <Check size={12} className="text-green-500" /> : <Copy size={12} className="text-slate-400 opacity-50" />}
+                                        </div>
+                                        <div className="flex items-center justify-between border-t border-slate-100 dark:border-white/5 pt-2">
+                                          <div className="flex items-center gap-2">
+                                            <Lock size={12} className="text-slate-400" />
+                                            <span className="text-[11px] font-bold text-slate-600 dark:text-white/80 font-mono">{visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}</span>
+                                          </div>
+                                          <div className="flex gap-2">
+                                            <button onClick={() => togglePassword(rowItem.id)} className="p-1.5 text-slate-400">
+                                              {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
+                                            </button>
+                                            <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass-mob`)} className="p-1.5 text-slate-400">
+                                              {copiedField === `${rowItem.id}-pass-mob` ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                                            </button>
+                                          </div>
+                                        </div>
                                       </div>
                                     ) : activeTab === 'subscriptions' ? (
                                       <div className="flex items-center gap-2">
@@ -932,8 +952,8 @@ const Gestione: React.FC = () => {
                                   </>
                                 ) : activeTab === 'pec' ? (
                                   <>
-                                    {/* PEC Layout: 6 + 4 + 2 */}
-                                    <div className="col-span-6 flex items-center gap-4">
+                                    {/* PEC Layout: 4 + 4 + 2 + 2 */}
+                                    <div className="col-span-4 flex items-center gap-4">
                                       <div className="p-3 rounded-2xl bg-violet-500/10 text-violet-500">
                                         <Mail size={18} />
                                       </div>
@@ -952,7 +972,23 @@ const Gestione: React.FC = () => {
                                         <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Casella PEC</p>
                                       </div>
                                     </div>
-                                    <div className="col-span-4">
+                                    <div className="col-span-4 flex items-center gap-4">
+                                      <div className="flex items-center bg-slate-100 dark:bg-white/5 rounded-xl px-4 py-2 border border-transparent hover:border-violet-500/20 transition-all w-[240px]">
+                                        <Lock size={14} className="text-slate-400 mr-2 flex-shrink-0" />
+                                        <span className="text-[12px] font-bold text-slate-600 dark:text-white/80 font-mono truncate flex-1">
+                                          {visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}
+                                        </span>
+                                        <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+                                          <button onClick={() => togglePassword(rowItem.id)} className="p-1 hover:text-violet-500 transition-colors text-slate-400">
+                                            {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
+                                          </button>
+                                          <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass`)} className="p-1 hover:text-violet-500 transition-colors text-slate-400">
+                                            {copiedField === `${rowItem.id}-pass` ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="col-span-2">
                                       <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500 shadow-[0_0_12px_rgba(239,68,68,0.1)]' :
                                         expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
                                           expiryColor === 'green' ? 'bg-green-500/10 text-green-500' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>

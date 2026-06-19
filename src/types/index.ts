@@ -57,6 +57,7 @@ export interface PecEmail {
   id: string;
   user_id: string;
   address: string;
+  password_encrypted?: string | null;
   expiry_date: string | null;
   notes: string | null;
   created_at: string;

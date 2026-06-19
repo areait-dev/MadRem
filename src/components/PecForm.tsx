@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Calendar, Save } from 'lucide-react';
+import { Mail, Calendar, Save, Lock, Eye, EyeOff, Copy, Check } from 'lucide-react';
 import type { PecEmail } from '../types';
 
 interface PecFormProps {
@@ -11,25 +11,36 @@ interface PecFormProps {
 const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => {
   const [formData, setFormData] = useState({
     address: initialData?.address || '',
+    password_encrypted: initialData?.password_encrypted || '',
     expiry_date: initialData?.expiry_date || '',
     notes: initialData?.notes || '',
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await onSubmit({
       address: formData.address,
+      password_encrypted: formData.password_encrypted || null,
       expiry_date: formData.expiry_date || null,
       notes: formData.notes || null,
     });
+  };
+
+  const copyToClipboard = (text: string, field: string) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    setTimeout(() => setCopiedField(null), 2000);
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-        {/* PEC Address - Full Width */}
-        <div className="md:col-span-2 space-y-2">
+        {/* PEC Address */}
+        <div className="space-y-2">
           <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">
             Indirizzo PEC
           </label>
@@ -41,10 +52,53 @@ const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => 
               type="email"
               placeholder="es. nome@pec.it"
               required
-              className="input-glass w-full pl-12 text-base font-bold bg-slate-50 dark:bg-white/[0.03]"
+              className="input-glass w-full pl-12 pr-12 text-base font-bold bg-slate-50 dark:bg-white/[0.03]"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
             />
+            <button
+              type="button"
+              onClick={() => copyToClipboard(formData.address, 'address')}
+              className="absolute inset-y-0 right-0 px-4 flex items-center text-slate-400 hover:text-primary transition-colors"
+            >
+              {copiedField === 'address' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+            </button>
+          </div>
+        </div>
+
+        {/* Password */}
+        <div className="space-y-2">
+          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">
+            Password Accesso
+          </label>
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <Lock className="h-5 w-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+            </div>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="••••••••"
+              required
+              className="input-glass w-full pl-12 pr-20 text-base font-bold bg-slate-50 dark:bg-white/[0.03]"
+              value={formData.password_encrypted}
+              onChange={(e) => setFormData({ ...formData, password_encrypted: e.target.value })}
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-2 gap-1">
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="p-2 text-slate-400 hover:text-primary transition-colors"
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+              <button
+                type="button"
+                onClick={() => copyToClipboard(formData.password_encrypted, 'password')}
+                className="p-2 text-slate-400 hover:text-primary transition-colors"
+              >
+                {copiedField === 'password' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+              </button>
+            </div>
           </div>
         </div>
 
