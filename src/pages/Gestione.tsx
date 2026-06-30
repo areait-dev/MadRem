@@ -226,8 +226,8 @@ const Gestione: React.FC = () => {
 
       const monthsToAdd =
         sub.billing_cycle === '1m' ? 1 :
-        sub.billing_cycle === '3m' ? 3 :
-        sub.billing_cycle === '6m' ? 6 : 12;
+          sub.billing_cycle === '3m' ? 3 :
+            sub.billing_cycle === '6m' ? 6 : 12;
 
       const newDate = new Date(baseDate);
       newDate.setMonth(newDate.getMonth() + monthsToAdd);
@@ -413,40 +413,40 @@ const Gestione: React.FC = () => {
             <p className="text-slate-500 dark:text-slate-400 font-bold text-sm tracking-widest uppercase opacity-70">Controllo centralizzato dell'infrastruttura</p>
           </div>
           <button onClick={() => handleOpenModal()} className="btn-primary flex items-center justify-center gap-2 px-6 py-3 text-xs font-black uppercase tracking-widest">
-            <Plus size={18} /> Nuovo {buttonLabel}
+            {buttonLabel === "PEC" ? "Nuova " : "Nuovo "} {buttonLabel}
           </button>
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white dark:bg-white/5 p-4 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-sm">
-            <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full w-full md:w-auto">
+          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between bg-white dark:bg-white/5 p-4 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-sm">
+            <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full w-full lg:w-auto lg:h-9">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as TabType)}
-                  className={`flex-1 md:flex-none flex items-center justify-center gap-2 px-4 md:px-6 py-3 md:py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${activeTab === tab.id ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}
+                  className={`flex-1 lg:flex-none flex items-center justify-center gap-1.5 lg:gap-2 px-3 lg:px-4 xl:px-5 py-2.5 lg:py-0 lg:h-full rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${activeTab === tab.id ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}
                 >
                   <tab.icon size={16} />
-                  <span className="hidden md:inline">{tab.label}</span>
+                  <span className="hidden xl:inline">{tab.label}</span>
                   <span className="hidden sm:inline ml-2 px-1.5 py-0.5 rounded-lg bg-slate-200 dark:bg-white/5 text-[9px]">{tab.count}</span>
                 </button>
               ))}
             </div>
 
-            <div className="flex flex-wrap md:flex-nowrap items-center gap-4 lg:gap-6 w-full md:w-auto justify-center md:justify-end">
+            <div className="flex flex-wrap lg:flex-nowrap items-center gap-3 w-full lg:w-auto justify-center lg:justify-end lg:h-9">
               {/* View Mode Toggle - ONLY DOMAINS */}
               {activeTab === 'domains' && (
-                <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full shrink-0">
+                <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full shrink-0 lg:h-full items-center">
                   <button
                     onClick={() => setViewMode('extended')}
-                    className={`p-2.5 rounded-full transition-all ${viewMode === 'extended' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'}`}
+                    className={`h-full aspect-square flex items-center justify-center rounded-full transition-all ${viewMode === 'extended' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'}`}
                     title="Vista Estesa"
                   >
                     <List size={16} />
                   </button>
                   <button
                     onClick={() => setViewMode('compact')}
-                    className={`p-2.5 rounded-full transition-all ${viewMode === 'compact' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'}`}
+                    className={`h-full aspect-square flex items-center justify-center rounded-full transition-all ${viewMode === 'compact' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'}`}
                     title="Vista Compatta"
                   >
                     <LayoutGrid size={16} />
@@ -454,10 +454,10 @@ const Gestione: React.FC = () => {
                 </div>
               )}
               {/* Contextual Sorting */}
-              <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full overflow-hidden shrink-0">
+              <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full overflow-hidden shrink-0 lg:h-full items-center">
                 <button
                   onClick={() => setSortBy('name')}
-                  className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === 'name' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${sortBy === 'name' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                   Nome
                 </button>
@@ -465,13 +465,13 @@ const Gestione: React.FC = () => {
                   <>
                     <button
                       onClick={() => setSortBy('expiry')}
-                      className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === 'expiry' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${sortBy === 'expiry' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                       Data
                     </button>
                     <button
                       onClick={() => setSortBy('status')}
-                      className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${sortBy === 'status' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${sortBy === 'status' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                       Stato
                     </button>
@@ -480,7 +480,7 @@ const Gestione: React.FC = () => {
                 <div className="w-px h-3 bg-slate-200 dark:bg-white/10 self-center mx-1" />
                 <button
                   onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
-                  className="px-3 text-slate-400 hover:text-primary transition-colors"
+                  className="h-full flex items-center justify-center px-2.5 text-slate-400 hover:text-primary transition-colors"
                 >
                   {sortOrder === 'asc' ? <SortAsc size={16} /> : <SortDesc size={16} />}
                 </button>
@@ -488,19 +488,19 @@ const Gestione: React.FC = () => {
 
               {/* Panel Filter - Contextual */}
               {activeTab !== 'panels' && activeTab !== 'pec' && activeTab !== 'subscriptions' && (
-                <div className="relative group w-full md:w-auto shrink-0">
+                <div className="relative group w-full lg:w-auto shrink-0 lg:h-full">
                   <select
                     value={selectedPanel}
                     onChange={(e) => setSelectedPanel(e.target.value)}
-                    className="appearance-none bg-slate-100 dark:bg-black/20 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-widest pl-10 pr-12 py-3.5 rounded-full outline-none border-none cursor-pointer hover:bg-slate-200 dark:hover:bg-white/5 transition-all w-full md:min-w-[180px]"
+                    className="appearance-none bg-slate-100 dark:bg-black/20 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-wider pl-7 pr-8 py-2.5 lg:py-0 rounded-full outline-none border-none cursor-pointer hover:bg-slate-200 dark:hover:bg-white/5 transition-all w-full lg:min-w-[110px] lg:h-full leading-none"
                   >
-                    <option value="all">Tutti i Pannelli</option>
+                    <option value="all">Tutti</option>
                     {panels.map(p => (
                       <option key={p.id} value={p.id}>{p.title || p.email}</option>
                     ))}
                   </select>
-                  <Filter size={14} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-                  <ChevronDownIcon size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  <Filter size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+                  <ChevronDownIcon size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                 </div>
               )}
             </div>
