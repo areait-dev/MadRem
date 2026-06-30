@@ -413,7 +413,7 @@ const Gestione: React.FC = () => {
             <p className="text-slate-500 dark:text-slate-400 font-bold text-sm tracking-widest uppercase opacity-70">Controllo centralizzato dell'infrastruttura</p>
           </div>
           <button onClick={() => handleOpenModal()} className="btn-primary flex items-center justify-center gap-2 px-6 py-3 text-xs font-black uppercase tracking-widest">
-            {buttonLabel === "PEC" ? "Nuova " : "Nuovo "} {buttonLabel}
+            <Plus size={18} /> {buttonLabel === "PEC" ? "Nuova " : "Nuovo " + buttonLabel}
           </button>
         </div>
 
