@@ -418,46 +418,76 @@ const Gestione: React.FC = () => {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="flex flex-col lg:flex-row gap-4 items-center justify-between bg-white dark:bg-white/5 p-4 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-sm">
-            <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full w-full lg:w-auto lg:h-9">
+          {/* Top Row: Navigation Tabs */}
+          <div className="bg-white dark:bg-white/5 p-2 sm:p-2.5 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-sm">
+            <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full w-full justify-between items-center overflow-x-auto no-scrollbar gap-1">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as TabType)}
-                  className={`flex-1 lg:flex-none flex items-center justify-center gap-1.5 lg:gap-2 px-3 lg:px-4 xl:px-5 py-2.5 lg:py-0 lg:h-full rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${activeTab === tab.id ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}
+                  className={`flex-1 shrink-0 flex items-center justify-center gap-2 px-3 sm:px-4 xl:px-6 py-2.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap ${
+                    activeTab === tab.id
+                      ? 'bg-white dark:bg-white/10 text-primary shadow-sm'
+                      : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'
+                  }`}
                 >
-                  <tab.icon size={16} />
-                  <span className="hidden xl:inline">{tab.label}</span>
-                  <span className="hidden sm:inline ml-2 px-1.5 py-0.5 rounded-lg bg-slate-200 dark:bg-white/5 text-[9px]">{tab.count}</span>
+                  <tab.icon size={16} className="shrink-0" />
+                  <span>{tab.label}</span>
+                  <span className="px-1.5 py-0.5 rounded-lg bg-slate-200 dark:bg-white/5 text-[9px] sm:text-[10px]">
+                    {tab.count}
+                  </span>
                 </button>
               ))}
             </div>
+          </div>
 
-            <div className="flex flex-wrap lg:flex-nowrap items-center gap-3 w-full lg:w-auto justify-center lg:justify-end lg:h-9">
+          {/* Bottom Row: Search Input (Left Column) + Contextual Controls (Right Column) */}
+          <div className="bg-white dark:bg-white/5 p-2 sm:p-3 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-sm flex flex-col md:flex-row items-center justify-between gap-3">
+            {/* Left Column: Search Bar */}
+            <div className="relative w-full md:flex-1 group">
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
+              <input
+                type="text"
+                placeholder={`Cerca tra ${activeTab === 'panels' ? 'i pannelli' : activeTab === 'domains' ? 'i domini' : activeTab === 'databases' ? 'i database' : activeTab === 'pec' ? 'le PEC' : 'gli abbonamenti'}...`}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-2.5 sm:py-3 bg-transparent border-transparent rounded-full text-xs sm:text-sm font-black uppercase tracking-wider outline-none transition-all placeholder:text-slate-400/60"
+              />
+            </div>
+
+            {/* Right Column: Contextual Controls (View Mode, Sorting, Panel Filter) */}
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto justify-center md:justify-end shrink-0">
               {/* View Mode Toggle - ONLY DOMAINS */}
               {activeTab === 'domains' && (
-                <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full shrink-0 lg:h-full items-center">
+                <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full shrink-0 h-9 sm:h-10 items-center">
                   <button
                     onClick={() => setViewMode('extended')}
-                    className={`h-full aspect-square flex items-center justify-center rounded-full transition-all ${viewMode === 'extended' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'}`}
+                    className={`h-full aspect-square flex items-center justify-center rounded-full transition-all ${
+                      viewMode === 'extended' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'
+                    }`}
                     title="Vista Estesa"
                   >
                     <List size={16} />
                   </button>
                   <button
                     onClick={() => setViewMode('compact')}
-                    className={`h-full aspect-square flex items-center justify-center rounded-full transition-all ${viewMode === 'compact' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'}`}
+                    className={`h-full aspect-square flex items-center justify-center rounded-full transition-all ${
+                      viewMode === 'compact' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'
+                    }`}
                     title="Vista Compatta"
                   >
                     <LayoutGrid size={16} />
                   </button>
                 </div>
               )}
+
               {/* Contextual Sorting */}
-              <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full overflow-hidden shrink-0 lg:h-full items-center">
+              <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full overflow-hidden shrink-0 h-9 sm:h-10 items-center">
                 <button
                   onClick={() => setSortBy('name')}
-                  className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${sortBy === 'name' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                  className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
+                    sortBy === 'name' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'
+                  }`}
                 >
                   Nome
                 </button>
@@ -465,13 +495,17 @@ const Gestione: React.FC = () => {
                   <>
                     <button
                       onClick={() => setSortBy('expiry')}
-                      className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${sortBy === 'expiry' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
+                        sortBy === 'expiry' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'
+                      }`}
                     >
                       Data
                     </button>
                     <button
                       onClick={() => setSortBy('status')}
-                      className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all ${sortBy === 'status' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                      className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
+                        sortBy === 'status' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'
+                      }`}
                     >
                       Stato
                     </button>
@@ -488,11 +522,11 @@ const Gestione: React.FC = () => {
 
               {/* Panel Filter - Contextual */}
               {activeTab !== 'panels' && activeTab !== 'pec' && activeTab !== 'subscriptions' && (
-                <div className="relative group w-full lg:w-auto shrink-0 lg:h-full">
+                <div className="relative group shrink-0 h-9 sm:h-10">
                   <select
                     value={selectedPanel}
                     onChange={(e) => setSelectedPanel(e.target.value)}
-                    className="appearance-none bg-slate-100 dark:bg-black/20 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-wider pl-7 pr-8 py-2.5 lg:py-0 rounded-full outline-none border-none cursor-pointer hover:bg-slate-200 dark:hover:bg-white/5 transition-all w-full lg:min-w-[110px] lg:h-full leading-none"
+                    className="appearance-none bg-slate-100 dark:bg-black/20 text-slate-500 dark:text-slate-400 text-[10px] font-black uppercase tracking-wider pl-8 pr-8 rounded-full outline-none border-none cursor-pointer hover:bg-slate-200 dark:hover:bg-white/5 transition-all min-w-[110px] h-full leading-none"
                   >
                     <option value="all">Tutti</option>
                     {panels.map(p => (
@@ -503,20 +537,6 @@ const Gestione: React.FC = () => {
                   <ChevronDownIcon size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* Search Row */}
-          <div className="bg-white dark:bg-white/5 p-2 rounded-[2.5rem] border border-slate-200 dark:border-white/5 shadow-sm">
-            <div className="relative w-full group">
-              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors" size={18} />
-              <input
-                type="text"
-                placeholder={`Cerca tra ${activeTab === 'panels' ? 'i pannelli' : activeTab === 'domains' ? 'i domini' : activeTab === 'databases' ? 'i database' : activeTab === 'pec' ? 'le PEC' : 'gli abbonamenti'}...`}
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-14 pr-6 py-4 bg-transparent border-transparent rounded-full text-base font-black uppercase tracking-widest outline-none transition-all placeholder:text-slate-400/60"
-              />
             </div>
           </div>
         </div>
