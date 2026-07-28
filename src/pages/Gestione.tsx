@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Plus, Search, Globe, Calendar, HardDrive, Database as DbIcon, Mail, Inbox,
   Trash2, Edit3, Layers, Eye, EyeOff, Copy, Check,
-  User, Lock, SortAsc, SortDesc, List, LayoutGrid, Filter, FileText, ChevronDown as ChevronDownIcon, Tag, RefreshCw
+  User, Lock, SortAsc, SortDesc, List, LayoutGrid, Filter, FileText, ChevronDown as ChevronDownIcon, Tag, RefreshCw,
+  Ban, CheckCircle2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Swal from 'sweetalert2';
@@ -329,6 +330,24 @@ const Gestione: React.FC = () => {
     }
   };
 
+  const handleToggleDisablePec = async (pec: PecEmail) => {
+    try {
+      const nextDisabledState = !pec.is_disabled;
+      await updatePec(pec.id, { is_disabled: nextDisabledState });
+      Toast.fire({ title: nextDisabledState ? 'PEC Disabilitata!' : 'PEC Riabilitata!' });
+      loadData();
+    } catch (err: any) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Errore',
+        text: err.message,
+        confirmButtonColor: '#F7BE00',
+        background: isDark() ? '#1a1a1a' : '#fff',
+        color: isDark() ? '#fff' : '#1e293b',
+      });
+    }
+  };
+
   const filteredItems = useMemo(() => {
     let items: any[] = activeTab === 'panels' ? panels
       : activeTab === 'domains' ? allDomains
@@ -413,7 +432,7 @@ const Gestione: React.FC = () => {
             <p className="text-slate-500 dark:text-slate-400 font-bold text-sm tracking-widest uppercase opacity-70">Controllo centralizzato dell'infrastruttura</p>
           </div>
           <button onClick={() => handleOpenModal()} className="btn-primary flex items-center justify-center gap-2 px-6 py-3 text-xs font-black uppercase tracking-widest">
-            <Plus size={18} /> {buttonLabel === "PEC" ? "Nuova " : "Nuovo " + buttonLabel}
+            <Plus size={18} /> {buttonLabel === "PEC" ? "Nuova PEC" : "Nuovo " + buttonLabel}
           </button>
         </div>
 
@@ -425,11 +444,10 @@ const Gestione: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as TabType)}
-                  className={`flex-1 shrink-0 flex items-center justify-center gap-2 px-3 sm:px-4 xl:px-6 py-2.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap ${
-                    activeTab === tab.id
-                      ? 'bg-white dark:bg-white/10 text-primary shadow-sm'
-                      : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'
-                  }`}
+                  className={`flex-1 shrink-0 flex items-center justify-center gap-2 px-3 sm:px-4 xl:px-6 py-2.5 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider transition-all whitespace-nowrap ${activeTab === tab.id
+                    ? 'bg-white dark:bg-white/10 text-primary shadow-sm'
+                    : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'
+                    }`}
                 >
                   <tab.icon size={16} className="shrink-0" />
                   <span>{tab.label}</span>
@@ -462,18 +480,16 @@ const Gestione: React.FC = () => {
                 <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full shrink-0 h-9 sm:h-10 items-center">
                   <button
                     onClick={() => setViewMode('extended')}
-                    className={`h-full aspect-square flex items-center justify-center rounded-full transition-all ${
-                      viewMode === 'extended' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'
-                    }`}
+                    className={`h-full aspect-square flex items-center justify-center rounded-full transition-all ${viewMode === 'extended' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'
+                      }`}
                     title="Vista Estesa"
                   >
                     <List size={16} />
                   </button>
                   <button
                     onClick={() => setViewMode('compact')}
-                    className={`h-full aspect-square flex items-center justify-center rounded-full transition-all ${
-                      viewMode === 'compact' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'
-                    }`}
+                    className={`h-full aspect-square flex items-center justify-center rounded-full transition-all ${viewMode === 'compact' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400'
+                      }`}
                     title="Vista Compatta"
                   >
                     <LayoutGrid size={16} />
@@ -485,9 +501,8 @@ const Gestione: React.FC = () => {
               <div className="flex p-1 bg-slate-100 dark:bg-black/20 rounded-full overflow-hidden shrink-0 h-9 sm:h-10 items-center">
                 <button
                   onClick={() => setSortBy('name')}
-                  className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
-                    sortBy === 'name' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'
-                  }`}
+                  className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${sortBy === 'name' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'
+                    }`}
                 >
                   Nome
                 </button>
@@ -495,17 +510,15 @@ const Gestione: React.FC = () => {
                   <>
                     <button
                       onClick={() => setSortBy('expiry')}
-                      className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
-                        sortBy === 'expiry' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'
-                      }`}
+                      className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${sortBy === 'expiry' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'
+                        }`}
                     >
                       Data
                     </button>
                     <button
                       onClick={() => setSortBy('status')}
-                      className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
-                        sortBy === 'status' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'
-                      }`}
+                      className={`h-full flex items-center justify-center px-3 rounded-full text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${sortBy === 'status' ? 'bg-white dark:bg-white/10 text-primary shadow-sm' : 'text-slate-400 hover:text-slate-600'
+                        }`}
                     >
                       Stato
                     </button>
@@ -596,15 +609,15 @@ const Gestione: React.FC = () => {
 
                           return (
                             <div key={rowItem.id} className="transition-all">
-                              {/* --- MOBILE VIEW: Card Layout --- */}                              <div className={`md:hidden p-6 space-y-4 ${isChild ? 'ml-4 border-l-2 border-slate-100 dark:border-white/5 pl-4' : ''}`}>
+                              {/* --- MOBILE VIEW: Card Layout --- */}                              <div className={`md:hidden p-6 space-y-4 ${isChild ? 'ml-4 border-l-2 border-slate-100 dark:border-white/5 pl-4' : ''} ${activeTab === 'pec' && rowItem.is_disabled ? 'opacity-60 bg-slate-50/50 dark:bg-white/[0.01]' : ''}`}>
                                 <div className="flex items-start justify-between">
                                   <div className={`flex items-center gap-3 ${rowItem.isGroup ? 'cursor-pointer' : ''}`} onClick={() => rowItem.isGroup && toggleGroup(rowItem.id)}>
-                                    <div className={`p-3 rounded-2xl ${activeTab === 'panels' ? 'bg-primary/10 text-primary' : activeTab === 'pec' ? 'bg-violet-500/10 text-violet-500' : activeTab === 'subscriptions' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
+                                    <div className={`p-3 rounded-2xl ${activeTab === 'panels' ? 'bg-primary/10 text-primary' : activeTab === 'pec' ? (rowItem.is_disabled ? 'bg-slate-200 dark:bg-white/10 text-slate-400' : 'bg-violet-500/10 text-violet-500') : activeTab === 'subscriptions' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
                                       {activeTab === 'panels' ? <User size={18} /> : activeTab === 'pec' ? <Mail size={18} /> : activeTab === 'subscriptions' ? <Tag size={18} /> : (activeTab === 'domains' && rowItem.isGroup) ? <Layers size={18} /> : activeTab === 'domains' ? <Globe size={18} /> : <DbIcon size={18} />}
                                     </div>
                                     <div className="min-w-0">
                                       <div className="flex items-center gap-2">
-                                        <p className="text-sm font-black truncate text-slate-900 dark:text-white">
+                                        <p className={`text-sm font-black truncate ${activeTab === 'pec' && rowItem.is_disabled ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-900 dark:text-white'}`}>
                                           {rowItem.title || rowItem.name || rowItem.sql_name || rowItem.address}
                                         </p>
                                         {!rowItem.isGroup && rowItem.notes && (
@@ -624,7 +637,7 @@ const Gestione: React.FC = () => {
                                       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                                         {rowItem.isGroup ? 'Contenitore Pannello' :
                                           activeTab === 'panels' ? 'Account' :
-                                            activeTab === 'pec' ? 'Casella PEC' :
+                                            activeTab === 'pec' ? (rowItem.is_disabled ? 'Casella PEC • Disabilitata' : 'Casella PEC') :
                                               activeTab === 'subscriptions' ? `Abbonamento ${rowItem.billing_cycle === '1m' ? '• Mensile' : rowItem.billing_cycle === '3m' ? '• Trimestrale' : rowItem.billing_cycle === '6m' ? '• Semestrale' : rowItem.billing_cycle === '1y' ? '• Annuale' : ''}` :
                                                 activeTab === 'domains' ? `${rowItem.panelTitle && !isChild ? rowItem.panelTitle + ' • ' : ''}${getDomainTypeLabel(rowItem.type)}` :
                                                   (rowItem.panelTitle || `v${rowItem.sql_version}`)}
@@ -634,7 +647,12 @@ const Gestione: React.FC = () => {
 
                                   {/* Expiry Badge (Mobile) - Uniform to Desktop */}
                                   <div>
-                                    {activeTab === 'panels' ? '' : rowItem.expiry_date && (
+                                    {activeTab === 'panels' ? '' : (activeTab === 'pec' && rowItem.is_disabled) ? (
+                                      <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-slate-400">
+                                        <Ban size={12} className="opacity-70" />
+                                        Disabilitata
+                                      </div>
+                                    ) : rowItem.expiry_date && (
                                       <div className={`
                                         flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest
                                         ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)]' :
@@ -794,6 +812,10 @@ const Gestione: React.FC = () => {
                                     )}
                                     {activeTab === 'pec' && (
                                       <>
+                                        <button onClick={() => handleToggleDisablePec(rowItem)} className={`flex-1 py-2 text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${rowItem.is_disabled ? 'text-emerald-500 hover:text-emerald-400' : 'text-slate-400 hover:text-red-500'}`}>
+                                          {rowItem.is_disabled ? <CheckCircle2 size={14} /> : <Ban size={14} />} {rowItem.is_disabled ? 'Abilita' : 'Disabilita'}
+                                        </button>
+                                        <div className="w-px h-4 bg-slate-100 dark:bg-white/10 self-center" />
                                         <button onClick={() => handleRenewPec(rowItem)} className="flex-1 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-emerald-500 transition-all flex items-center justify-center gap-2">
                                           <RefreshCw size={14} /> Rinnova
                                         </button>
@@ -820,7 +842,7 @@ const Gestione: React.FC = () => {
                               </div>
 
                               {/* --- DESKTOP VIEW: Grid Row --- */}
-                              <div className="hidden md:grid grid-cols-12 gap-4 px-8 py-5 items-center hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group">
+                              <div className={`hidden md:grid grid-cols-12 gap-4 px-8 py-5 items-center hover:bg-slate-50 dark:hover:bg-white/[0.02] transition-colors group ${activeTab === 'pec' && rowItem.is_disabled ? 'opacity-60 bg-slate-50/50 dark:bg-white/[0.01]' : ''}`}>
 
                                 {activeTab === 'panels' ? (
                                   <>
@@ -1009,12 +1031,19 @@ const Gestione: React.FC = () => {
                                       </div>
                                     </div>
                                     <div className="col-span-2">
-                                      <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500 shadow-[0_0_12px_rgba(239,68,68,0.1)]' :
-                                        expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
-                                          expiryColor === 'green' ? 'bg-green-500/10 text-green-500' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
-                                        <Calendar size={12} className="opacity-70" />
-                                        {formattedDate || 'Non impostata'}
-                                      </div>
+                                      {rowItem.is_disabled ? (
+                                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-slate-200 dark:bg-white/10 text-slate-500 dark:text-slate-400">
+                                          <Ban size={12} className="opacity-70" />
+                                          Disabilitata
+                                        </div>
+                                      ) : (
+                                        <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${expiryColor === 'red' ? 'bg-red-500/10 text-red-500 shadow-[0_0_12px_rgba(239,68,68,0.1)]' :
+                                          expiryColor === 'orange' ? 'bg-orange-500/10 text-orange-500' :
+                                            expiryColor === 'green' ? 'bg-green-500/10 text-green-500' : 'bg-slate-100 dark:bg-white/5 text-slate-400'}`}>
+                                          <Calendar size={12} className="opacity-70" />
+                                          {formattedDate || 'Non impostata'}
+                                        </div>
+                                      )}
                                     </div>
                                   </>
                                 ) : (
@@ -1071,9 +1100,18 @@ const Gestione: React.FC = () => {
                                         </button>
                                       )}
                                       {activeTab === 'pec' && (
-                                        <button onClick={() => handleRenewPec(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 transition-all" title="Rinnova PEC">
-                                          <RefreshCw size={18} />
-                                        </button>
+                                        <>
+                                          <button
+                                            onClick={() => handleToggleDisablePec(rowItem)}
+                                            className={`p-2 rounded-lg transition-all ${rowItem.is_disabled ? 'text-emerald-500 hover:bg-emerald-500/10' : 'text-slate-400 hover:text-red-500 hover:bg-red-500/10'}`}
+                                            title={rowItem.is_disabled ? 'Abilita PEC' : 'Disabilita PEC (Congela Scadenza)'}
+                                          >
+                                            {rowItem.is_disabled ? <CheckCircle2 size={18} /> : <Ban size={18} />}
+                                          </button>
+                                          <button onClick={() => handleRenewPec(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 transition-all" title="Rinnova PEC">
+                                            <RefreshCw size={18} />
+                                          </button>
+                                        </>
                                       )}
                                       {activeTab === 'subscriptions' && (
                                         <button onClick={() => handleRenewSubscription(rowItem)} className="p-2 rounded-lg text-slate-400 hover:text-emerald-500 hover:bg-emerald-500/10 transition-all" title="Rinnova Abbonamento">

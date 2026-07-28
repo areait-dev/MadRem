@@ -60,6 +60,7 @@ export interface PecEmail {
   password_encrypted?: string | null;
   expiry_date: string | null;
   notes: string | null;
+  is_disabled?: boolean;
   created_at: string;
   updated_at: string;
 }

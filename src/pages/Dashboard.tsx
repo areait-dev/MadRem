@@ -61,6 +61,7 @@ const Dashboard: React.FC = () => {
   // Combine all expiring assets (within 30 days)
   const expiringAssets = [...allDomains, ...allDatabases, ...allPecs, ...allSubs]
     .filter(asset => {
+      if ((asset as any).is_disabled) return false;
       if (!asset.expiry_date) return false;
       const expiry = new Date(asset.expiry_date);
       const now = new Date();

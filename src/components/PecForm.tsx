@@ -14,6 +14,7 @@ const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => 
     password_encrypted: initialData?.password_encrypted || '',
     expiry_date: initialData?.expiry_date || '',
     notes: initialData?.notes || '',
+    is_disabled: initialData?.is_disabled || false,
   });
   const [showPassword, setShowPassword] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -25,6 +26,7 @@ const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => 
       password_encrypted: formData.password_encrypted || null,
       expiry_date: formData.expiry_date || null,
       notes: formData.notes || null,
+      is_disabled: formData.is_disabled,
     });
   };
 
