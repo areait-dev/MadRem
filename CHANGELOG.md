@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.6.0](https://github.com/areait-dev/MadRem/compare/v2.5.2...v2.6.0) (2026-07-28)
+
+
+### Features
+
+* aggiunto azione disabilita/abilita pec con status badge visivo ([39cd2c1](https://github.com/areait-dev/MadRem/commit/39cd2c1479e14c90ae3bd6605b92b57c3dc9c160))
+
 ### [2.5.2](https://github.com/areait-dev/MadRem/compare/v2.5.1...v2.5.2) (2026-07-23)
 
 ### [2.5.1](https://github.com/areait-dev/MadRem/compare/v2.5.0...v2.5.1) (2026-06-30)
