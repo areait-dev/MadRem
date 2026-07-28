@@ -2,7 +2,7 @@
   "name": "madroomreminder",
   "private": true,
   "version": "2.6.0",
-  "releaseDate": "2026-07-23",
+  "releaseDate": "2026-07-28",
   "type": "module",
   "scripts": {
     "dev": "vite",
