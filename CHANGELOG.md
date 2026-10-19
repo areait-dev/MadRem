@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.0.1](https://github.com/areait-dev/MadRem/compare/v3.0.0...v3.0.1) (2026-10-19)
+
+### Build
+
+* migrazione a **Tailwind CSS 4**: configurazione in `src/index.css` (`@theme`), token semantici come variabili CSS, nessun `tailwind.config.js`; `npm audit` a zero vulnerabilità
+* il pulsante di salvataggio dei form ora ha davvero l'altezza `btn-lg` (52px) e i segnaposto dei campi usano il grigio del design system
+
+### Refactoring
+
+* `Gestione.tsx` diviso in componenti (`components/gestione`) e nell'hook `useAssetActions`
+
+### Bug Fixes
+
+* **gestione:** "Nuova PEC" nel modal e "ELIMINARE LA PEC" nella conferma ([8990ad5](https://github.com/areait-dev/MadRem/commit/8990ad544b3d0ae54fb29c2133e687ad44ccbc58))
+
 ## [3.0.0](https://github.com/areait-dev/MadRem/compare/v2.6.0...v3.0.0) (2026-10-19)
 
 ### ⚠ BREAKING CHANGES
