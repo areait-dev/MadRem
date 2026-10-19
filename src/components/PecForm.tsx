@@ -43,45 +43,45 @@ const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => 
 
         {/* PEC Address */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">
+          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">
             Indirizzo PEC
           </label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Mail className="h-5 w-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+              <Mail className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
             </div>
             <input
               type="email"
               placeholder="es. nome@pec.it"
               required
-              className="input-glass w-full pl-12 pr-12 text-base font-bold bg-slate-50 dark:bg-white/[0.03]"
+              className="input pl-12 pr-12"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
             />
             <button
               type="button"
               onClick={() => copyToClipboard(formData.address, 'address')}
-              className="absolute inset-y-0 right-0 px-4 flex items-center text-slate-400 hover:text-primary transition-colors"
+              className="absolute inset-y-0 right-0 px-4 flex items-center text-muted hover:text-link transition-colors"
             >
-              {copiedField === 'address' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+              {copiedField === 'address' ? <Check size={16} className="text-success" /> : <Copy size={16} />}
             </button>
           </div>
         </div>
 
         {/* Password */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">
+          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">
             Password Accesso
           </label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Lock className="h-5 w-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+              <Lock className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
             </div>
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               required
-              className="input-glass w-full pl-12 pr-20 text-base font-bold bg-slate-50 dark:bg-white/[0.03]"
+              className="input pl-12 pr-20"
               value={formData.password_encrypted}
               onChange={(e) => setFormData({ ...formData, password_encrypted: e.target.value })}
             />
@@ -89,16 +89,16 @@ const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => 
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="p-2 text-slate-400 hover:text-primary transition-colors"
+                className="p-2 text-muted hover:text-link transition-colors"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
               <button
                 type="button"
                 onClick={() => copyToClipboard(formData.password_encrypted, 'password')}
-                className="p-2 text-slate-400 hover:text-primary transition-colors"
+                className="p-2 text-muted hover:text-link transition-colors"
               >
-                {copiedField === 'password' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                {copiedField === 'password' ? <Check size={16} className="text-success" /> : <Copy size={16} />}
               </button>
             </div>
           </div>
@@ -106,15 +106,15 @@ const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => 
 
         {/* Expiry Date - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">
+          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">
             Data di Scadenza
           </label>
           <div className="relative group">
-            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 pointer-events-none z-10" />
+            <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted pointer-events-none z-10" />
             <input
               type="date"
               required
-              className="input-glass appearance-none w-full min-w-0 max-w-full pl-12 pr-4 text-base font-bold bg-slate-50 dark:bg-white/[0.03] [color-scheme:light] dark:[color-scheme:dark] min-h-[50px]"
+              className="input appearance-none min-w-0 max-w-full pl-12 pr-4 [color-scheme:light] dark:[color-scheme:dark]"
               value={formData.expiry_date}
               onChange={(e) => setFormData({ ...formData, expiry_date: e.target.value })}
             />
@@ -123,13 +123,13 @@ const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => 
 
         {/* Notes - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">
+          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">
             Annotazioni
           </label>
           <textarea
             placeholder="Dettagli aggiuntivi..."
             rows={2}
-            className="input-glass w-full py-4 px-5 text-base font-bold bg-slate-50 dark:bg-white/[0.03] resize-none"
+            className="input py-4 px-5 resize-none"
             value={formData.notes}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
           />
@@ -140,7 +140,7 @@ const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => 
         <button
           type="submit"
           disabled={loading}
-          className="w-full btn-primary !py-5 flex items-center justify-center gap-3 text-[13px] font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/20"
+          className="btn-primary btn-lg w-full"
         >
           <Save size={18} />
           {loading ? 'Salvataggio...' : initialData?.id ? 'Modifica PEC' : 'Salva PEC'}

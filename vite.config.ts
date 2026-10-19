@@ -8,27 +8,27 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['madrem.circle.png'],
+      includeAssets: ['promoremind-icon.svg', 'promoremind-icon-192.png', 'promoremind-icon-512.png'],
       manifest: {
-        name: 'MadRem',
-        short_name: 'MadRem',
+        name: 'promoremind',
+        short_name: 'promoremind',
         description: 'Monitoraggio Infrastruttura',
-        theme_color: '#0a0a0a',
-        background_color: '#0a0a0a',
+        theme_color: '#000814',
+        background_color: '#000814',
         display: 'standalone',
         icons: [
           {
-            src: 'madrem.circle.png',
+            src: 'promoremind-icon-192.png',
             sizes: '192x192',
             type: 'image/png'
           },
           {
-            src: 'madrem.circle.png',
+            src: 'promoremind-icon-512.png',
             sizes: '512x512',
             type: 'image/png'
           },
           {
-            src: 'madrem.circle.png',
+            src: 'promoremind-icon-512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
@@ -37,6 +37,17 @@ export default defineConfig({
       }
     })
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ['react', 'react-dom', 'react-router-dom'],
+          motion: ['framer-motion'],
+          supabase: ['@supabase/supabase-js'],
+        },
+      },
+    },
+  },
   server: {
     host: true,
     port: 5173,

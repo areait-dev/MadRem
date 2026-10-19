@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
-const colors = require('tailwindcss/colors')
+
+// Colori semantici: i valori cambiano con il tema (.dark) in src/index.css
+const token = (name) => `rgb(var(--c-${name}) / <alpha-value>)`
 
 export default {
   content: [
@@ -10,51 +12,52 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Atkinson Hyperlegible', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-body)', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-heading)', 'system-ui', 'sans-serif'],
       },
       colors: {
+        // Semantici (light/dark)
+        page: token('bg'),
+        surface: token('surface'),
+        fg: token('fg'),
+        muted: token('muted'),
+        line: token('line'),
+        link: token('link'),
+        elevated: token('elevated'),
+        divider: 'var(--color-divider)',
+        error: token('error'),
+        success: token('success'),
+        // Brand — design system Promotergroup
         primary: {
-          DEFAULT: '#F7BE00',
-          50: '#FFF9E5',
-          100: '#FFF3CC',
-          200: '#FFE799',
-          300: '#FFDB66',
-          400: '#FFD033',
-          500: '#F7BE00',
-          600: '#C99A00',
-          700: '#9B7500',
-          800: '#6D5100',
-          900: '#3F2C00',
+          DEFAULT: '#022A66',
+          accent: '#0563F0',
+          light: '#AFCEFD',
+          dark: '#02193C',
+          mid: '#044AB4',
+          deep: '#033B90',
+          deepest: '#01132E',
+          lightest: '#DAE8FD',
+          night: '#001428',
         },
-        'accent': {
-          DEFAULT: '#3b82f6',
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
+        accent: {
+          DEFAULT: '#0563F0',
+          hover: '#044AB4',
         },
-        // Se vuoi anche una palette 'yellow' custom:
-        yellow: {
-          50: '#FFF9E5',
-          100: '#FFF3CC',
-          200: '#FFE799',
-          300: '#FFDB66',
-          400: '#FFD033',
-          500: '#F7BE00',
-          600: '#C99A00',
-          700: '#9B7500',
-          800: '#6D5100',
-          900: '#3F2C00',
+        grey: {
+          50: '#F7F6F4',
+          100: '#F0EEE9',
+          200: '#D4D3D1',
+          400: '#A8A8A6',
+          600: '#6E6E6C',
+          700: '#3D3D3B',
+          800: '#1A1A18',
+          900: '#0D0D0B',
         },
+        ink: '#000814',
       },
-      backdropBlur: {
-        xs: '2px',
+      borderRadius: {
+        btn: 'var(--radius-btn)',
+        card: 'var(--radius-card)',
       },
       animation: {
         'fade-in': 'fadeIn 0.3s ease-in-out',

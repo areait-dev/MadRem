@@ -76,6 +76,20 @@ export interface Subscription {
   updated_at: string;
 }
 
+// Riga generica delle liste di Gestione/Dashboard: i campi di pannelli, domini, database, PEC e abbonamenti
+// sono tutti opzionali, più i campi calcolati usati dall'interfaccia (raggruppamento per pannello, ecc.)
+export type AssetRow = Omit<
+  Partial<ArubaPanel & Domain & Database & PecEmail & Subscription>,
+  'type' | 'id' | 'password_encrypted'
+> & {
+  id: string;
+  type?: string;
+  password_encrypted?: string | null;
+  panelTitle?: string | null;
+  isGroup?: boolean;
+  subdomains?: AssetRow[];
+};
+
 export interface AppSettings {
   email: string;
   reminderDays: number;

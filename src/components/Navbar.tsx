@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -7,6 +7,7 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import Swal from 'sweetalert2';
 import ThemeToggle from './ThemeToggle';
+import Logo from './Logo';
 
 const NAV_LINKS = [
   { name: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
@@ -19,54 +20,54 @@ export default function Navbar() {
   const pathname = location.pathname;
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollY = useRef(0);
 
 
   // Static avatar from public folder
   const avatarUrl = "/adriano200.png";
 
-  // Smart Visibility Logic
+  // Smart Visibility Logic: un solo listener, aggiornato al massimo una volta per frame
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+    let ticking = false;
 
-      // Shadow/Shrink logic
+    const update = () => {
+      const currentScrollY = window.scrollY;
       setIsScrolled(currentScrollY > 20);
 
-      // Hide/Show logic
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Scrolling down - hide
+      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
         setIsVisible(false);
       } else {
-        // Scrolling up - show
         setIsVisible(true);
       }
 
-      setLastScrollY(currentScrollY);
+      lastScrollY.current = currentScrollY;
+      ticking = false;
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   const handleLogout = () => {
-    const isDark = document.documentElement.classList.contains('dark');
-
     Swal.fire({
       title: 'Vuoi uscire?',
       showCancelButton: true,
-      confirmButtonText: 'ESCI',
-      cancelButtonText: 'ANNULLA',
+      confirmButtonText: 'Esci',
+      cancelButtonText: 'Annulla',
       reverseButtons: true,
-      background: isDark ? 'rgba(15, 23, 42, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-      color: isDark ? '#ffffff' : '#0f172a',
-      backdrop: `rgba(0,0,0,0.5)`,
-      width: '320px',
+      width: '360px',
       customClass: {
-        popup: 'rounded-[2.5rem] border border-slate-200 dark:border-white/10 backdrop-blur-2xl shadow-2xl p-6',
-        title: 'text-[11px] font-black tracking-[0.4em] text-slate-500 dark:text-white/40 mb-8 uppercase pt-4',
-        confirmButton: 'btn-primary !px-8 !py-3 !text-[10px] !rounded-full !m-2',
-        cancelButton: 'bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-white/30 !px-8 !py-3 !text-[10px] !rounded-full !m-2',
+        popup: 'ds-popup',
+        confirmButton: 'ds-confirm-btn',
+        cancelButton: 'ds-cancel-btn',
+        actions: 'ds-actions',
       },
       buttonsStyling: false,
     }).then((result) => {
@@ -83,28 +84,21 @@ export default function Navbar() {
       flex justify-center px-4 md:px-4
       ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-[150%] opacity-0 pointer-events-none'}
     `}>
-      {/* ── High-End Glass Pill ── */}
+      {/* Barra di navigazione */}
       <div className={`
         relative w-[80%] md:w-full max-w-3xl flex items-center justify-between overflow-hidden
         transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)]
-        backdrop-blur-xl bg-white/[0.03] dark:bg-black/20 border border-slate-200 dark:border-white/10
+        bg-surface border border-divider
         ${isScrolled
-          ? 'h-11 rounded-full shadow-[0_-20px_50px_rgba(0,0,0,0.1)] dark:shadow-[0_-20px_50px_rgba(0,0,0,0.3)] bg-white/80 dark:bg-black/40'
-          : 'h-14 md:h-16 rounded-full md:rounded-[2rem] shadow-[0_-10px_30px_rgba(0,0,0,0.05)]'
+          ? 'h-12 rounded-card'
+          : 'h-14 md:h-16 rounded-card'
         }
       `}>
 
         {/* Logo Section - Hooked to the left edge */}
-        <Link to="/dashboard" className="flex items-center group z-10 transition-all duration-500">
-          <div className={`
-            flex items-center justify-center rounded-full transition-all duration-500 overflow-hidden
-            ${isScrolled ? 'h-11 w-11' : 'h-14 w-14 md:h-14 md:w-14'}
-          `}>
-            <img src="/madrem.circle.png" alt="Logo" className="w-full h-full object-contain scale-90 group-hover:scale-100 transition-transform duration-700" />
-          </div>
-          <span className="hidden sm:block mx-4 text-sm md:text-xl font-black tracking-tighter text-slate-900 dark:text-white transition-colors">
-            Mad<span style={{ color: '#F7BE00' }} className="italic">Rem</span>
-          </span>
+        <Link to="/dashboard" className="flex items-center gap-3 pl-3 md:pl-4 z-10" aria-label="promoremind — Dashboard">
+          <Logo variant="icon" className="h-9 sm:hidden" />
+          <Logo className="hidden sm:inline-flex h-3.5 md:h-5" />
         </Link>
 
         {/* Main Nav (Icons only on mobile) */}
@@ -117,22 +111,22 @@ export default function Navbar() {
                   key={name}
                   to={href}
                   className={`
-                    flex items-center gap-3 px-3 md:px-5 py-2 md:py-2.5 rounded-2xl md:rounded-full transition-all duration-300
-                    outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50
+                    flex items-center gap-3 px-3 md:px-5 py-2 md:py-2.5 rounded-card md:rounded-full transition-all duration-300
+                    outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-accent
                     select-none active:scale-95
                     ${active
-                      ? 'text-primary'
-                      : 'text-slate-400 hover:text-primary'
+                      ? 'text-link'
+                      : 'text-muted hover:text-link'
                     }
                   `}
                   style={{ WebkitTapHighlightColor: 'transparent' }}
                 >
                   <Icon size={25} className={`md:w-5 md:h-5 transition-transform duration-300`} />
-                  <span className="hidden md:block text-xs font-black uppercase tracking-[0.2em]">{name}</span>
+                  <span className="hidden md:block text-xs font-semibold uppercase tracking-wider">{name}</span>
                 </Link>
               );
             })}
-            <div className="h-6 w-px bg-slate-200 dark:bg-white/10 mx-2" />
+            <div className="h-6 w-px bg-line/20 mx-2" />
             <ThemeToggle />
           </div>
         </div>
@@ -141,10 +135,11 @@ export default function Navbar() {
         <div className="flex items-center z-10">
           <button
             onClick={handleLogout}
+            aria-label="Esci"
             className="group flex items-center transition-all duration-500"
           >
             <div className="max-w-0 overflow-hidden group-hover:max-w-[80px] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] hidden sm:block">
-              <span className="ml-4 mr-2 text-[10px] font-black uppercase tracking-[0.2em] text-red-500 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
+              <span className="ml-4 mr-2 text-xs font-semibold uppercase tracking-wider text-error whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
                 Esci
               </span>
             </div>
