@@ -120,13 +120,13 @@ const Dashboard: React.FC = () => {
         {/* Header */}
         <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div className="space-y-1">
-            <motion.h1
+            <motion.h2
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               className="text-fg"
             >
               Dashboard <span className="text-accent ">Infrastruttura</span>
-            </motion.h1>
+            </motion.h2>
             <p className="text-muted font-semibold text-sm tracking-widest uppercase">
               Stato globale e monitoraggio scadenze
             </p>

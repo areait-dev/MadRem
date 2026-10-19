@@ -94,12 +94,6 @@ export default function Login() {
           <p className="text-muted text-xl max-w-md leading-relaxed font-semibold transition-colors">
             Sistemi avanzati per il monitoraggio e la gestione di domini, database e infrastrutture.
           </p>
-
-          <div className="pt-10 flex gap-4">
-            <div className="h-1.5 w-16 rounded-full bg-accent" />
-            <div className="h-1.5 w-6 rounded-full bg-line/20" />
-            <div className="h-1.5 w-6 rounded-full bg-line/20" />
-          </div>
         </motion.div>
       </div>
 
