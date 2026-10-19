@@ -12,7 +12,7 @@ export default defineConfig({
       manifest: {
         name: 'promoremind',
         short_name: 'promoremind',
-        description: 'Domini, database, PEC e abbonamenti di Promotergroup: nessuna scadenza ti sfugge',
+        description: 'Domini, database, PEC e abbonamenti di Promotergroup: tutte le scadenze in un posto solo',
         theme_color: '#000814',
         background_color: '#000814',
         display: 'standalone',

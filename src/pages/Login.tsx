@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { getErrorMessage } from '../utils/errors';
-import { usePageTitle } from '../hooks/usePageTitle';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import TechBackground from '../components/TechBackground';
@@ -10,7 +9,6 @@ import Logo from '../components/Logo';
 import ThemeToggle from '../components/ThemeToggle';
 
 export default function Login() {
-  usePageTitle('Accesso');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);

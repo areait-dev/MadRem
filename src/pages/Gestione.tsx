@@ -20,11 +20,9 @@ import type { TabType } from '../components/gestione/helpers';
 import type { RowContext, SortBy, SortOrder, TabDef, ViewMode } from '../components/gestione/types';
 import { useAssetActions } from '../hooks/useAssetActions';
 import { useInfrastructure } from '../hooks/useInfrastructure';
-import { usePageTitle } from '../hooks/usePageTitle';
 import type { ArubaPanel, AssetRow, Database, Domain, PecEmail, Subscription } from '../types';
 
 const Gestione: React.FC = () => {
-  usePageTitle('Gestione asset');
   const [activeTab, setActiveTab] = useState<TabType>('panels');
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
