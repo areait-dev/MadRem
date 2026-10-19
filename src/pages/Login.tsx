@@ -73,48 +73,28 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row relative overflow-hidden transition-colors duration-500">
+    <div className="min-h-screen flex flex-col items-center justify-center px-gutter py-12 relative overflow-hidden">
       <TechBackground />
 
-      {/* Top Bar for Toggle */}
       <div className="absolute top-6 right-6 z-50">
         <ThemeToggle />
       </div>
 
-      {/* Left Side: Branding & Info */}
-      <div className="hidden md:flex md:w-[45%] flex-col justify-center p-12 lg:p-20 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6 }}
-          className="space-y-6"
-        >
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+        className="relative z-10 w-full max-w-md"
+      >
+        <div className="flex flex-col items-center text-center mb-8 space-y-4">
+          <Logo className="h-9 md:h-11" />
           <h1 className="sr-only">PromoRemind</h1>
-          <Logo className="h-8 lg:h-12 mb-4" />
-          <p className="text-muted text-xl max-w-md leading-relaxed font-semibold transition-colors">
-            Sistemi avanzati per il monitoraggio e la gestione di domini, database e infrastrutture.
-          </p>
-        </motion.div>
-      </div>
+          <h2 className="text-fg">Accedi</h2>
+          <p className="text-muted">Scadenze di domini, database e infrastrutture.</p>
+        </div>
 
-      {/* Right Side: Login Form */}
-      <div className="flex-1 flex items-center justify-center p-6 md:p-12 relative z-10">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-md"
-        >
-          <div className="card p-8 md:p-10 space-y-8 border border-divider">
-            <div className="md:hidden flex justify-center mb-6">
-              <Logo className="h-8" />
-            </div>
-
-            <div className="space-y-2">
-              <h2 className="text-fg">Accesso</h2>
-              <p className="text-muted font-semibold text-sm uppercase tracking-widest transition-colors">Credenziali Aziendali</p>
-            </div>
-
+        <div className="card p-8 border border-divider backdrop-blur-md bg-surface/80">
+          <div className="space-y-8">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-5">
                 {/* Email Input */}
@@ -223,8 +203,8 @@ export default function Login() {
               </AnimatePresence>
             </form>
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
     </div>
   );
 }
