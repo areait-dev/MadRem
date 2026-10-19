@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { getErrorMessage } from '../utils/errors';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import TechBackground from '../components/TechBackground';
+import Logo from '../components/Logo';
 import ThemeToggle from '../components/ThemeToggle';
 
 export default function Login() {
@@ -52,8 +54,8 @@ export default function Login() {
     try {
       await signIn(email, password, rememberMe);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Errore durante il login');
+    } catch (err) {
+      setError(getErrorMessage(err) || 'Errore durante il login');
     } finally {
       setLoading(false);
     }
@@ -61,10 +63,10 @@ export default function Login() {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] dark:bg-[#0a0a0a]">
+      <div className="min-h-screen flex items-center justify-center bg-page">
         <div className="text-center relative z-10">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-slate-900 dark:text-white font-black uppercase tracking-widest text-xs">Verifica sessione...</p>
+          <p className="text-fg font-semibold uppercase tracking-widest text-xs">Verifica sessione...</p>
         </div>
       </div>
     );
@@ -87,20 +89,16 @@ export default function Login() {
           transition={{ duration: 0.6 }}
           className="space-y-6"
         >
-          <div className="flex h-32 w-32 items-center justify-center mb-4 p-3 bg-white/5 dark:bg-transparent rounded-full">
-            <img src="/madrem.circle.png" alt="Logo" className="w-full h-full object-contain" />
-          </div>
-          <h1 className="text-6xl lg:text-7xl font-black text-slate-900 dark:text-white tracking-tighter transition-colors">
-            Mad<span className="text-primary italic">Rem</span>
-          </h1>
-          <p className="text-slate-600 dark:text-text-muted text-xl max-w-md leading-relaxed font-bold opacity-80 transition-colors">
+          <h1 className="sr-only">promoremind</h1>
+          <Logo className="h-8 lg:h-12 mb-4" />
+          <p className="text-muted text-xl max-w-md leading-relaxed font-semibold transition-colors">
             Sistemi avanzati per il monitoraggio e la gestione di domini, database e infrastrutture.
           </p>
 
           <div className="pt-10 flex gap-4">
-            <div className="h-1.5 w-16 rounded-full bg-primary shadow-[0_0_15px_rgba(247,190,0,0.3)] dark:shadow-[0_0_15px_rgba(247,190,0,0.5)]" />
-            <div className="h-1.5 w-6 rounded-full bg-slate-200 dark:bg-white/10" />
-            <div className="h-1.5 w-6 rounded-full bg-slate-200 dark:bg-white/10" />
+            <div className="h-1.5 w-16 rounded-full bg-accent" />
+            <div className="h-1.5 w-6 rounded-full bg-line/20" />
+            <div className="h-1.5 w-6 rounded-full bg-line/20" />
           </div>
         </motion.div>
       </div>
@@ -113,31 +111,29 @@ export default function Login() {
           transition={{ duration: 0.5 }}
           className="w-full max-w-md"
         >
-          <div className="glass-card p-8 md:p-10 space-y-8 border border-slate-200 dark:border-white/10 shadow-2xl backdrop-blur-xl">
-            <div className="md:hidden text-center mb-6">
-              <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tighter transition-colors">
-                Mad<span className="text-primary italic">Rem</span>
-              </h1>
+          <div className="card p-8 md:p-10 space-y-8 border border-divider">
+            <div className="md:hidden flex justify-center mb-6">
+              <Logo className="h-8" />
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-3xl font-black text-slate-900 dark:text-white tracking-tight transition-colors">Accesso</h2>
-              <p className="text-slate-500 dark:text-text-muted font-bold text-sm uppercase tracking-widest opacity-60 transition-colors">Credenziali Aziendali</p>
+              <h2 className="text-fg">Accesso</h2>
+              <p className="text-muted font-semibold text-sm uppercase tracking-widest transition-colors">Credenziali Aziendali</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-5">
                 {/* Email Input */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-500 dark:text-text-muted uppercase tracking-[0.2em] ml-1">Email</label>
+                  <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Email</label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-slate-400 dark:text-text-muted group-focus-within:text-primary transition-colors" />
+                      <Mail className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
                     </div>
                     <input
                       type="email"
                       placeholder="nome@azienda.it"
-                      className="input-glass w-full pl-12 font-bold bg-white/50 dark:bg-black/20"
+                      className="input pl-12"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
@@ -148,7 +144,7 @@ export default function Login() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="text-[11px] text-red-500 dark:text-red-400 font-bold ml-1"
+                        className="text-xs text-error font-semibold ml-1"
                       >
                         {emailError}
                       </motion.p>
@@ -158,22 +154,23 @@ export default function Login() {
 
                 {/* Password Input */}
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black text-slate-500 dark:text-text-muted uppercase tracking-[0.2em] ml-1">Password</label>
+                  <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Password</label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                      <Lock className="h-5 w-5 text-slate-400 dark:text-text-muted group-focus-within:text-primary transition-colors" />
+                      <Lock className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
                     </div>
                     <input
                       type={showPassword ? 'text' : 'password'}
                       placeholder="••••••••"
-                      className="input-glass w-full pl-12 pr-12 font-bold bg-white/50 dark:bg-black/20"
+                      className="input pl-12 pr-12"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 flex items-center pr-4 text-slate-400 dark:text-text-muted hover:text-primary transition-colors"
+                      aria-label={showPassword ? 'Nascondi password' : 'Mostra password'}
+                      className="absolute inset-y-0 right-0 flex items-center pr-4 text-muted hover:text-link transition-colors"
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -184,7 +181,7 @@ export default function Login() {
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: 'auto' }}
                         exit={{ opacity: 0, height: 0 }}
-                        className="text-[11px] text-red-500 dark:text-red-400 font-bold ml-1"
+                        className="text-xs text-error font-semibold ml-1"
                       >
                         {passwordError}
                       </motion.p>
@@ -202,19 +199,19 @@ export default function Login() {
                       onChange={(e) => setRememberMe(e.target.checked)}
                       className="sr-only"
                     />
-                    <div className={`w-5 h-5 rounded-lg border-2 transition-all duration-200 flex items-center justify-center ${rememberMe ? 'bg-primary border-primary' : 'border-slate-200 dark:border-white/10 group-hover:border-primary/50'
+                    <div className={`w-5 h-5 rounded-lg border-2 transition-all duration-200 flex items-center justify-center ${rememberMe ? 'bg-accent border-primary' : 'border-divider group-hover:border-accent/50'
                       }`}>
-                      {rememberMe && <div className="w-2 h-2 bg-slate-900 dark:bg-background rounded-sm" />}
+                      {rememberMe && <div className="w-2 h-2 bg-fg rounded-sm" />}
                     </div>
                   </div>
-                  <span className="ml-3 text-[11px] text-slate-500 dark:text-text-muted group-hover:text-slate-900 dark:group-hover:text-white transition-colors font-black uppercase tracking-widest">Rimani collegato</span>
+                  <span className="ml-3 text-xs text-muted group-hover:text-fg transition-colors font-semibold uppercase tracking-widest">Rimani collegato</span>
                 </label>
               </div>
 
               <button
                 type="submit"
                 disabled={loading || authLoading}
-                className="w-full btn-primary !py-4 text-sm font-black uppercase tracking-[0.2em]"
+                className="btn-primary btn-lg w-full"
               >
                 {loading ? "Accesso in corso..." : "Accedi al Sistema"}
               </button>
@@ -224,9 +221,9 @@ export default function Login() {
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="p-4 bg-red-500/10 border border-red-500/20 rounded-2xl text-center"
+                    className="p-4 bg-error/10 border border-error/40 rounded-card text-center"
                   >
-                    <p className="text-xs text-red-500 dark:text-red-400 font-bold">{error}</p>
+                    <p className="text-xs text-error font-semibold">{error}</p>
                   </motion.div>
                 )}
               </AnimatePresence>

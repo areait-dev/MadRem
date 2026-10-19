@@ -9,7 +9,7 @@ const ThemeToggle: React.FC = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="relative h-10 w-10 flex items-center justify-center rounded-xl transition-all duration-300 group overflow-hidden"
+      className="relative h-10 w-10 flex items-center justify-center rounded-lg transition-all duration-300 group overflow-hidden"
       aria-label="Toggle theme"
     >
       <AnimatePresence mode="wait">
@@ -21,7 +21,7 @@ const ThemeToggle: React.FC = () => {
             exit={{ y: -20, opacity: 0, rotate: 45 }}
             transition={{ duration: 0.2 }}
           >
-            <Sun size={18} className="text-primary" />
+            <Sun size={18} className="text-link" />
           </motion.div>
         ) : (
           <motion.div
@@ -31,13 +31,13 @@ const ThemeToggle: React.FC = () => {
             exit={{ y: -20, opacity: 0, rotate: -45 }}
             transition={{ duration: 0.2 }}
           >
-            <Moon size={18} className="text-primary" />
+            <Moon size={18} className="text-link" />
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Subtle background glow */}
-      <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+      <div className="absolute inset-0 bg-accent/5 opacity-0 group-hover:opacity-100 transition-opacity" />
     </button>
   );
 };

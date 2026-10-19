@@ -39,7 +39,7 @@ const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-sm"
+            className="absolute inset-0 bg-ink/70"
           />
 
           {/* Modal Content */}
@@ -48,16 +48,17 @@ const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className={`relative w-full ${maxWidth} bg-white dark:bg-[#111] rounded-[3rem] shadow-2xl border border-slate-200 dark:border-white/10 overflow-hidden z-10`}
+            className={`relative w-full ${maxWidth} bg-elevated rounded-card border border-divider overflow-hidden z-10`}
           >
             {/* Header */}
-            <div className="px-8 py-6 border-b border-slate-100 dark:border-white/5 flex items-center justify-between">
-              <h3 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">
+            <div className="px-8 py-6 border-b border-divider flex items-center justify-between">
+              <h4 className="text-fg">
                 {title}
-              </h3>
+              </h4>
               <button
                 onClick={onClose}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 transition-all"
+                aria-label="Chiudi"
+                className="p-2 rounded-lg text-muted hover:text-fg hover:bg-line/10 transition-all"
               >
                 <X size={20} />
               </button>

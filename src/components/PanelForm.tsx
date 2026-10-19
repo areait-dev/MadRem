@@ -35,16 +35,16 @@ const PanelForm: React.FC<PanelFormProps> = ({ initialData, onSubmit, loading })
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Title - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">Titolo / Nome Identificativo</label>
+          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Titolo / Nome Identificativo</label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <FileText className="h-5 w-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+              <FileText className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
             </div>
             <input
               type="text"
               placeholder="es. Pannello Principale Clienti"
               required
-              className="input-glass w-full pl-12 text-base font-bold bg-slate-50 dark:bg-white/[0.03] border-transparent focus:border-primary/20"
+              className="input pl-12"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             />
@@ -53,41 +53,41 @@ const PanelForm: React.FC<PanelFormProps> = ({ initialData, onSubmit, loading })
 
         {/* Email */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">Email Accesso</label>
+          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Email Accesso</label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Mail className="h-5 w-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+              <Mail className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
             </div>
             <input
               type="email"
               placeholder="email@aruba.it"
               required
-              className="input-glass w-full pl-12 pr-12 text-base font-bold bg-slate-50 dark:bg-white/[0.03]"
+              className="input pl-12 pr-12"
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             />
             <button
               type="button"
               onClick={() => copyToClipboard(formData.email, 'email')}
-              className="absolute inset-y-0 right-0 px-4 flex items-center text-slate-400 hover:text-primary transition-colors"
+              className="absolute inset-y-0 right-0 px-4 flex items-center text-muted hover:text-link transition-colors"
             >
-              {copiedField === 'email' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+              {copiedField === 'email' ? <Check size={16} className="text-success" /> : <Copy size={16} />}
             </button>
           </div>
         </div>
 
         {/* Password */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">Password</label>
+          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Password</label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <Lock className="h-5 w-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+              <Lock className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
             </div>
             <input
               type={showPassword ? 'text' : 'password'}
               placeholder="••••••••"
               required
-              className="input-glass w-full pl-12 pr-20 text-base font-bold bg-slate-50 dark:bg-white/[0.03]"
+              className="input pl-12 pr-20"
               value={formData.password_encrypted}
               onChange={(e) => setFormData({ ...formData, password_encrypted: e.target.value })}
             />
@@ -95,16 +95,16 @@ const PanelForm: React.FC<PanelFormProps> = ({ initialData, onSubmit, loading })
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="p-2 text-slate-400 hover:text-primary transition-colors"
+                className="p-2 text-muted hover:text-link transition-colors"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
               <button
                 type="button"
                 onClick={() => copyToClipboard(formData.password_encrypted, 'password')}
-                className="p-2 text-slate-400 hover:text-primary transition-colors"
+                className="p-2 text-muted hover:text-link transition-colors"
               >
-                {copiedField === 'password' ? <Check size={16} className="text-green-500" /> : <Copy size={16} />}
+                {copiedField === 'password' ? <Check size={16} className="text-success" /> : <Copy size={16} />}
               </button>
             </div>
           </div>
@@ -112,11 +112,11 @@ const PanelForm: React.FC<PanelFormProps> = ({ initialData, onSubmit, loading })
 
         {/* Notes - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] ml-1">Note (Opzionale)</label>
+          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Note (Opzionale)</label>
           <textarea
             placeholder="Aggiungi dettagli aggiuntivi..."
             rows={2}
-            className="input-glass w-full py-4 px-5 text-base font-bold bg-slate-50 dark:bg-white/[0.03] resize-none"
+            className="input py-4 px-5 resize-none"
             value={formData.notes || ''}
             onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
           />
@@ -127,7 +127,7 @@ const PanelForm: React.FC<PanelFormProps> = ({ initialData, onSubmit, loading })
         <button
           type="submit"
           disabled={loading}
-          className="w-full btn-primary !py-5 flex items-center justify-center gap-3 text-[13px] font-black uppercase tracking-[0.2em] shadow-lg shadow-primary/20"
+          className="btn-primary btn-lg w-full"
         >
           <Save size={18} />
           {loading ? 'Salvataggio...' : initialData?.id ? 'Modifica Pannello' : 'Salva Pannello'}

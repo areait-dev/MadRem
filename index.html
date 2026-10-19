@@ -1,13 +1,23 @@
 <!doctype html>
-<html lang="it">
+<html lang="it" class="dark">
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" type="image/png" href="/madrem.circle.png" />
-  <link rel="apple-touch-icon" href="/madrem.circle.png" />
+  <link rel="icon" type="image/svg+xml" href="/promoremind-icon.svg" />
+  <link rel="apple-touch-icon" href="/promoremind-icon-192.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#0a0a0a" />
-  <title>Monitoraggio Infrastruttura</title>
+  <meta name="theme-color" content="#000814" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&family=Unbounded:wght@600;700;800&display=swap" />
+  <title>promoremind</title>
+  <script>
+    try {
+      var t = localStorage.getItem('theme') || 'dark';
+      var d = t === 'dark' || (t === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
+      document.documentElement.classList.toggle('dark', d);
+    } catch (e) {}
+  </script>
 </head>
 
 <body>

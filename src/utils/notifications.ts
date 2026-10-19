@@ -2,7 +2,6 @@ import type { ArubaPanel } from '../types';
 
 export const requestNotificationPermission = async () => {
   if (!('Notification' in window)) {
-    console.log('Questo browser non supporta le notifiche desktop');
     return false;
   }
 
@@ -19,7 +18,7 @@ export const requestNotificationPermission = async () => {
 export const sendNotification = (title: string, options?: NotificationOptions) => {
   if (Notification.permission === 'granted') {
     new Notification(title, {
-      icon: '/madrem.circle.png',
+      icon: '/promoremind-icon-192.png',
       ...options
     });
   }
@@ -54,7 +53,7 @@ export const checkAndNotifyExpiringAssets = (panels: ArubaPanel[]) => {
     const expiredCount = expired.length;
     const soonCount = soon.length;
 
-    const getNames = (list: any[]) => list.map(a => a.name || a.sql_name).slice(0, 3).join(', ') + (list.length > 3 ? '...' : '');
+    const getNames = (list: { name?: string; sql_name?: string }[]) => list.map(a => a.name || a.sql_name).slice(0, 3).join(', ') + (list.length > 3 ? '...' : '');
 
     let body = '';
     if (expiredCount > 0) {
@@ -66,9 +65,9 @@ export const checkAndNotifyExpiringAssets = (panels: ArubaPanel[]) => {
       body += `⚠️ IN SCADENZA: ${getNames(soon)}`;
     }
 
-    sendNotification(expiredCount > 0 ? 'MadRem: Allarme Critico' : 'MadRem: Alert Scadenze', {
+    sendNotification(expiredCount > 0 ? 'promoremind: Allarme Critico' : 'promoremind: Alert Scadenze', {
       body: body || 'Controlla la dashboard per i dettagli.',
-      tag: 'madrem-expiry-alert',
+      tag: 'promoremind-expiry-alert',
       requireInteraction: expiredCount > 0,
     });
   }

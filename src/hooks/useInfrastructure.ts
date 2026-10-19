@@ -8,6 +8,12 @@ export function useInfrastructure() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Le operazioni di scrittura richiedono una sessione valida
+  const requireUser = () => {
+    if (!user) throw new Error('Utente non autenticato');
+    return user;
+  };
+
   // --- Panels ---
   const fetchPanels = useCallback(async () => {
     if (!user) return [];
@@ -64,7 +70,7 @@ export function useInfrastructure() {
     if (!user) return null;
     const { data, error } = await supabase
       .from('aruba_panels')
-      .insert([{ ...panel, user_id: user.id }])
+      .insert([{ ...panel, user_id: requireUser().id }])
       .select()
       .single();
     
@@ -77,7 +83,7 @@ export function useInfrastructure() {
       .from('aruba_panels')
       .update(updates)
       .eq('id', id)
-      .eq('user_id', user.id)
+      .eq('user_id', requireUser().id)
       .select()
       .single();
     
@@ -90,7 +96,7 @@ export function useInfrastructure() {
       .from('aruba_panels')
       .delete()
       .eq('id', id)
-      .eq('user_id', user.id);
+      .eq('user_id', requireUser().id);
     
     if (error) throw error;
   };
@@ -100,7 +106,7 @@ export function useInfrastructure() {
     if (!user) return null;
     const { data, error } = await supabase
       .from('domains')
-      .insert([{ ...domain, user_id: user.id }])
+      .insert([{ ...domain, user_id: requireUser().id }])
       .select()
       .single();
     
@@ -113,7 +119,7 @@ export function useInfrastructure() {
       .from('domains')
       .update(updates)
       .eq('id', id)
-      .eq('user_id', user.id)
+      .eq('user_id', requireUser().id)
       .select()
       .single();
     if (error) throw error;
@@ -125,7 +131,7 @@ export function useInfrastructure() {
       .from('domains')
       .delete()
       .eq('id', id)
-      .eq('user_id', user.id);
+      .eq('user_id', requireUser().id);
     if (error) throw error;
   };
 
@@ -134,7 +140,7 @@ export function useInfrastructure() {
     if (!user) return null;
     const { data, error } = await supabase
       .from('databases')
-      .insert([{ ...db, user_id: user.id }])
+      .insert([{ ...db, user_id: requireUser().id }])
       .select()
       .single();
     
@@ -147,7 +153,7 @@ export function useInfrastructure() {
       .from('databases')
       .update(updates)
       .eq('id', id)
-      .eq('user_id', user.id)
+      .eq('user_id', requireUser().id)
       .select()
       .single();
     if (error) throw error;
@@ -159,7 +165,7 @@ export function useInfrastructure() {
       .from('databases')
       .delete()
       .eq('id', id)
-      .eq('user_id', user.id);
+      .eq('user_id', requireUser().id);
     if (error) throw error;
   };
 
@@ -168,7 +174,7 @@ export function useInfrastructure() {
     if (!user) return null;
     const { data, error } = await supabase
       .from('pec_emails')
-      .insert([{ ...pec, user_id: user.id }])
+      .insert([{ ...pec, user_id: requireUser().id }])
       .select()
       .single();
     if (error) throw error;
@@ -180,7 +186,7 @@ export function useInfrastructure() {
       .from('pec_emails')
       .update(updates)
       .eq('id', id)
-      .eq('user_id', user.id)
+      .eq('user_id', requireUser().id)
       .select()
       .single();
     if (error) throw error;
@@ -192,7 +198,7 @@ export function useInfrastructure() {
       .from('pec_emails')
       .delete()
       .eq('id', id)
-      .eq('user_id', user.id);
+      .eq('user_id', requireUser().id);
     if (error) throw error;
   };
 
@@ -201,7 +207,7 @@ export function useInfrastructure() {
     if (!user) return null;
     const { data, error } = await supabase
       .from('subscriptions')
-      .insert([{ ...sub, user_id: user.id }])
+      .insert([{ ...sub, user_id: requireUser().id }])
       .select()
       .single();
     if (error) throw error;
@@ -213,7 +219,7 @@ export function useInfrastructure() {
       .from('subscriptions')
       .update(updates)
       .eq('id', id)
-      .eq('user_id', user.id)
+      .eq('user_id', requireUser().id)
       .select()
       .single();
     if (error) throw error;
@@ -225,7 +231,7 @@ export function useInfrastructure() {
       .from('subscriptions')
       .delete()
       .eq('id', id)
-      .eq('user_id', user.id);
+      .eq('user_id', requireUser().id);
     if (error) throw error;
   };
 
@@ -236,7 +242,7 @@ export function useInfrastructure() {
     const upsertData = slots.map(slot => ({
       ...slot,
       database_id: databaseId,
-      user_id: user.id
+      user_id: requireUser().id
     }));
 
     const { data, error } = await supabase
