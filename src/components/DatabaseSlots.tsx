@@ -111,10 +111,10 @@ const DatabaseSlots: React.FC<DatabaseSlotsProps> = ({ database, onUpdate }) => 
               {showPassword ? database.password_encrypted : '••••••••'}
             </span>
             <div className="flex items-center gap-1 ml-1">
-              <button aria-label="Mostra o nascondi password" onClick={() => setShowPassword(!showPassword)} className="p-2 text-muted hover:text-link transition-colors">
+              <button aria-label="Mostra o nascondi password" onClick={() => setShowPassword(!showPassword)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 text-muted hover:text-link transition-colors">
                 {showPassword ? <EyeOff size={10} /> : <Eye size={10} />}
               </button>
-              <button aria-label="Copia" onClick={() => copyToClipboard(database.password_encrypted, 'pass')} className="p-2 text-muted hover:text-link transition-colors">
+              <button aria-label="Copia" onClick={() => copyToClipboard(database.password_encrypted, 'pass')} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 text-muted hover:text-link transition-colors">
                 {copiedField === 'pass' ? <Check size={10} className="text-success" /> : <Copy size={10} />}
               </button>
             </div>

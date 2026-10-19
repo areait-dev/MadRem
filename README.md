@@ -1,69 +1,69 @@
-# React + TypeScript + Vite
+# promoremind
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Promemoria e monitoraggio delle scadenze dell'infrastruttura di Promotergroup: pannelli Aruba, domini, database, caselle PEC e abbonamenti.
 
-Currently, two official plugins are available:
+Produzione: <https://remind.promotergroup.eu>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Stack
 
-## Expanding the ESLint configuration
+- React 19 + TypeScript + Vite
+- Tailwind CSS 3 con i token del design system Promotergroup (`src/index.css`, `tailwind.config.js`)
+- Supabase (autenticazione e database con RLS)
+- Framer Motion, SweetAlert2, lucide-react
+- PWA (`vite-plugin-pwa`) e hosting su Vercel
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Sviluppo
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev        # http://localhost:5173
+npm run lint
+npm run build      # tsc + vite build
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Crea un file `.env.local` (ignorato da git):
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+VITE_SUPABASE_URL=https://<progetto>.supabase.co
+VITE_SUPABASE_ANON_KEY=<chiave anon>
 ```
+
+## Design system
+
+- Font: Unbounded solo per i titoli H1–H6, Lexend per tutto il resto.
+- Colori: solo token semantici (`bg-page`, `bg-surface`, `text-fg`, `text-link`, `border-divider`…), con tema chiaro e scuro (classe `.dark` su `<html>`, scuro di default).
+- Bottoni `.btn-primary` / `.btn-secondary`, tag `.tag-*`, input `.input`; gutter laterale comune `px-gutter`.
+- Logo: `public/promoremind-light.svg` (tema chiaro) e `public/promoremind-dark.svg` (tema scuro), componente `src/components/Logo.tsx`.
+
+## Deploy (Vercel)
+
+Variabili d'ambiente per l'ambiente **Production**:
+
+| Variabile | Uso |
+|---|---|
+| `VITE_SUPABASE_URL` | URL del progetto Supabase |
+| `VITE_SUPABASE_ANON_KEY` | chiave anon (pubblica) |
+| `CRON_SECRET` | segreto del cron `api/keep-alive` (Vercel lo invia come `Authorization: Bearer …`) |
+
+Il cron `/api/keep-alive` gira ogni giorno alle 05:00 UTC (`vercel.json`) per evitare la messa in pausa del database Supabase.
+
+## Supabase
+
+In `supabase/` ci sono gli script SQL per la sicurezza:
+
+- `rls-audit.sql`: query di sola lettura per verificare la RLS (policy, permessi, test come utente anonimo ed estraneo);
+- `rls-hardening.sql`: rifiniture applicate dopo l'audit (permessi minimi, policy solo per utenti autenticati, indici).
+
+Tutte le tabelle hanno la colonna `user_id` e policy `auth.uid() = user_id`. Le registrazioni pubbliche sono disattivate.
+
+## Rilasci
+
+I commit seguono Conventional Commits (`commitlint`). Per un rilascio:
+
+```bash
+npm run release          # patch
+npm run release:minor
+npm run release:major
+```
+
+Aggiorna a mano `releaseDate` in `package.json`: è la data mostrata nel footer.

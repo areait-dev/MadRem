@@ -46,7 +46,7 @@
     "vite": "^7.0.4",
     "vite-plugin-pwa": "^1.3.0"
   },
-  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
+  "description": "promoremind — promemoria e monitoraggio delle scadenze dell'infrastruttura Promotergroup",
   "main": "eslint.config.js",
   "keywords": [],
   "author": "",

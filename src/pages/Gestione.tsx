@@ -679,7 +679,7 @@ const Gestione: React.FC = () => {
                                             <span className="text-xs font-semibold text-muted font-mono">{visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}</span>
                                           </div>
                                           <div className="flex gap-2">
-                                            <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="p-2 text-muted">
+                                            <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 text-muted">
                                               {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
                                             </button>
                                             <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass-mob`)} className="p-2 text-muted">
@@ -715,7 +715,7 @@ const Gestione: React.FC = () => {
                                               <span className="text-xs font-semibold text-muted font-mono">{visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}</span>
                                             </div>
                                             <div className="flex gap-2">
-                                              <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="p-2 text-muted">
+                                              <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 text-muted">
                                                 {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
                                               </button>
                                               <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass-mob`)} className="p-2 text-muted">
@@ -764,7 +764,7 @@ const Gestione: React.FC = () => {
                                             <span className="text-xs font-semibold text-muted font-mono">{visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}</span>
                                           </div>
                                           <div className="flex gap-2">
-                                            <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="p-2 text-muted">
+                                            <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 text-muted">
                                               {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
                                             </button>
                                             <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass-mob`)} className="p-2 text-muted">
@@ -867,7 +867,7 @@ const Gestione: React.FC = () => {
                                           {visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}
                                         </span>
                                         <div className="flex items-center gap-1 ml-2 flex-shrink-0">
-                                          <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="p-2 hover:text-link transition-colors text-muted">
+                                          <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 hover:text-link transition-colors text-muted">
                                             {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
                                           </button>
                                           <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass`)} className="p-2 hover:text-link transition-colors text-muted">
@@ -941,7 +941,7 @@ const Gestione: React.FC = () => {
                                             {visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}
                                           </span>
                                           <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="p-2 text-muted hover:text-link">
+                                            <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 text-muted hover:text-link">
                                               {visiblePasswords[rowItem.id] ? <EyeOff size={12} /> : <Eye size={12} />}
                                             </button>
                                             <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass`)} className="p-2 text-muted hover:text-link">
@@ -1015,7 +1015,7 @@ const Gestione: React.FC = () => {
                                           {visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}
                                         </span>
                                         <div className="flex items-center gap-1 ml-2 flex-shrink-0">
-                                          <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="p-2 hover:text-link transition-colors text-muted">
+                                          <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 hover:text-link transition-colors text-muted">
                                             {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
                                           </button>
                                           <button onClick={() => copyToClipboard(rowItem.password_encrypted, `${rowItem.id}-pass`)} className="p-2 hover:text-link transition-colors text-muted">
@@ -1079,17 +1079,17 @@ const Gestione: React.FC = () => {
                                   {!rowItem.isGroup && (
                                     <>
                                       {activeTab === 'databases' && (
-                                        <button aria-label="Gestisci slot" onClick={() => handleOpenSlots(rowItem)} className="p-2 rounded-lg text-muted hover:text-link hover:bg-accent/10 transition-all" title="Gestisci Slot">
+                                        <button aria-label="Gestisci slot" onClick={() => handleOpenSlots(rowItem)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 rounded-lg text-muted hover:text-link hover:bg-accent/10 transition-all" title="Gestisci Slot">
                                           <Layers size={18} />
                                         </button>
                                       )}
                                       {activeTab === 'domains' && (
-                                        <button aria-label="Rinnova dominio" onClick={() => handleRenewDomain(rowItem)} className="p-2 rounded-lg text-muted hover:text-success hover:bg-success/10 transition-all" title="Rinnova Dominio">
+                                        <button aria-label="Rinnova dominio" onClick={() => handleRenewDomain(rowItem)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 rounded-lg text-muted hover:text-success hover:bg-success/10 transition-all" title="Rinnova Dominio">
                                           <RefreshCw size={18} />
                                         </button>
                                       )}
                                       {activeTab === 'databases' && (
-                                        <button aria-label="Rinnova database" onClick={() => handleRenewDatabase(rowItem)} className="p-2 rounded-lg text-muted hover:text-success hover:bg-success/10 transition-all" title="Rinnova Database">
+                                        <button aria-label="Rinnova database" onClick={() => handleRenewDatabase(rowItem)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 rounded-lg text-muted hover:text-success hover:bg-success/10 transition-all" title="Rinnova Database">
                                           <RefreshCw size={18} />
                                         </button>
                                       )}
@@ -1102,20 +1102,20 @@ const Gestione: React.FC = () => {
                                           >
                                             {rowItem.is_disabled ? <CheckCircle2 size={18} /> : <Ban size={18} />}
                                           </button>
-                                          <button aria-label="Rinnova PEC" onClick={() => handleRenewPec(rowItem)} className="p-2 rounded-lg text-muted hover:text-success hover:bg-success/10 transition-all" title="Rinnova PEC">
+                                          <button aria-label="Rinnova PEC" onClick={() => handleRenewPec(rowItem)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 rounded-lg text-muted hover:text-success hover:bg-success/10 transition-all" title="Rinnova PEC">
                                             <RefreshCw size={18} />
                                           </button>
                                         </>
                                       )}
                                       {activeTab === 'subscriptions' && (
-                                        <button aria-label="Rinnova abbonamento" onClick={() => handleRenewSubscription(rowItem)} className="p-2 rounded-lg text-muted hover:text-success hover:bg-success/10 transition-all" title="Rinnova Abbonamento">
+                                        <button aria-label="Rinnova abbonamento" onClick={() => handleRenewSubscription(rowItem)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 rounded-lg text-muted hover:text-success hover:bg-success/10 transition-all" title="Rinnova Abbonamento">
                                           <RefreshCw size={18} />
                                         </button>
                                       )}
-                                      <button aria-label="Modifica" onClick={() => handleOpenModal(rowItem)} className="p-2 rounded-lg text-muted hover:text-link hover:bg-accent/10 transition-all" title="Modifica">
+                                      <button aria-label="Modifica" onClick={() => handleOpenModal(rowItem)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 rounded-lg text-muted hover:text-link hover:bg-accent/10 transition-all" title="Modifica">
                                         <Edit3 size={18} />
                                       </button>
-                                      <button aria-label="Elimina" onClick={() => handleDelete(rowItem)} className="p-2 rounded-lg text-muted hover:text-error hover:bg-error/10 transition-all" title="Elimina">
+                                      <button aria-label="Elimina" onClick={() => handleDelete(rowItem)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 rounded-lg text-muted hover:text-error hover:bg-error/10 transition-all" title="Elimina">
                                         <Trash2 size={18} />
                                       </button>
                                     </>
