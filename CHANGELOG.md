@@ -21,7 +21,7 @@ All notable changes to this project will be documented in this file. See [standa
 
 ### ⚠ BREAKING CHANGES
 
-* l'app è stata rinominata da MadRem a **promoremind** (nuovo dominio `remind.promotergroup.eu`) e usa il design system Promotergroup: nuovi colori, font (Unbounded e Lexend), logo e tema scuro di default
+* l'app è stata rinominata da MadRem a **PromoRemind** (nuovo dominio `remind.promotergroup.eu`) e usa il design system Promotergroup: nuovi colori, font (Unbounded e Lexend), logo e tema scuro di default
 * le registrazioni pubbliche su Supabase sono disattivate; il cron `/api/keep-alive` richiede `CRON_SECRET`
 
 ### Features

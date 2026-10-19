@@ -46,7 +46,7 @@
     "vite": "^7.0.4",
     "vite-plugin-pwa": "^1.3.0"
   },
-  "description": "promoremind — promemoria e monitoraggio delle scadenze dell'infrastruttura Promotergroup",
+  "description": "PromoRemind — promemoria e monitoraggio delle scadenze dell'infrastruttura Promotergroup",
   "main": "eslint.config.js",
   "keywords": [],
   "author": "",

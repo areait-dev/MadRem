@@ -1,5 +1,5 @@
 -- ============================================================================
--- promoremind — rifiniture RLS dopo l'audit (supabase/rls-audit.sql)
+-- PromoRemind — rifiniture RLS dopo l'audit (supabase/rls-audit.sql)
 -- Esito audit: RLS attiva su tutte le tabelle, policy "auth.uid() = user_id",
 -- anon e utenti estranei non vedono nulla, nessuna riga orfana, un solo utente.
 -- Questo script chiude i punti residui. È idempotente ed è in una transazione:

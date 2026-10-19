@@ -1,5 +1,5 @@
 -- ============================================================================
--- promoremind — verifica RLS (Row Level Security) su Supabase
+-- PromoRemind — verifica RLS (Row Level Security) su Supabase
 -- Da eseguire nel SQL Editor del progetto. Le query 1–10 sono di sola lettura.
 -- Le query 11–12 usano una transazione con ROLLBACK: non modificano nulla.
 -- Tabelle usate dall'app: aruba_panels, domains, databases, db_slots,

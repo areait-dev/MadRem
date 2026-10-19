@@ -96,7 +96,7 @@ export default function Navbar() {
       `}>
 
         {/* Logo Section - Hooked to the left edge */}
-        <Link to="/dashboard" className="flex items-center gap-3 pl-3 md:pl-4 z-10" aria-label="promoremind — Dashboard">
+        <Link to="/dashboard" className="flex items-center gap-3 pl-3 md:pl-4 z-10" aria-label="PromoRemind — Dashboard">
           <Logo variant="icon" className="h-9 sm:hidden" />
           <Logo className="hidden sm:inline-flex h-3.5 md:h-5" />
         </Link>

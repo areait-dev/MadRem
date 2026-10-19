@@ -65,7 +65,7 @@ export const checkAndNotifyExpiringAssets = (panels: ArubaPanel[]) => {
       body += `⚠️ IN SCADENZA: ${getNames(soon)}`;
     }
 
-    sendNotification(expiredCount > 0 ? 'promoremind: Allarme Critico' : 'promoremind: Alert Scadenze', {
+    sendNotification(expiredCount > 0 ? 'PromoRemind: Allarme Critico' : 'PromoRemind: Alert Scadenze', {
       body: body || 'Controlla la dashboard per i dettagli.',
       tag: 'promoremind-expiry-alert',
       requireInteraction: expiredCount > 0,

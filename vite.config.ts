@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['promoremind-icon.svg', 'promoremind-icon-192.png', 'promoremind-icon-512.png'],
       manifest: {
-        name: 'promoremind',
-        short_name: 'promoremind',
+        name: 'PromoRemind',
+        short_name: 'PromoRemind',
         description: 'Domini, database, PEC e abbonamenti di Promotergroup: tutte le scadenze in un posto solo',
         theme_color: '#000814',
         background_color: '#000814',

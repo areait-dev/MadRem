@@ -89,7 +89,7 @@ export default function Login() {
           transition={{ duration: 0.6 }}
           className="space-y-6"
         >
-          <h1 className="sr-only">promoremind</h1>
+          <h1 className="sr-only">PromoRemind</h1>
           <Logo className="h-8 lg:h-12 mb-4" />
           <p className="text-muted text-xl max-w-md leading-relaxed font-semibold transition-colors">
             Sistemi avanzati per il monitoraggio e la gestione di domini, database e infrastrutture.

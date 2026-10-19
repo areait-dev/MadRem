@@ -1,4 +1,4 @@
-# promoremind
+# PromoRemind
 
 Promemoria e monitoraggio delle scadenze dell'infrastruttura di Promotergroup: pannelli Aruba, domini, database, caselle PEC e abbonamenti.
 
