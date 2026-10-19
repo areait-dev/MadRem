@@ -1,8 +1,8 @@
 {
   "name": "promoremind",
   "private": true,
-  "version": "2.6.0",
-  "releaseDate": "2026-07-28",
+  "version": "3.0.0",
+  "releaseDate": "2026-10-19",
   "type": "module",
   "scripts": {
     "dev": "vite",

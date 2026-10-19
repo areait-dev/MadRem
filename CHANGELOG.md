@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/areait-dev/MadRem/compare/v2.6.0...v3.0.0) (2026-10-19)
+
+### ⚠ BREAKING CHANGES
+
+* l'app è stata rinominata da MadRem a **promoremind** (nuovo dominio `remind.promotergroup.eu`) e usa il design system Promotergroup: nuovi colori, font (Unbounded e Lexend), logo e tema scuro di default
+* le registrazioni pubbliche su Supabase sono disattivate; il cron `/api/keep-alive` richiede `CRON_SECRET`
+
+### Features
+
+* design system Promotergroup: token, bottoni, tag, input, scrollbar, titoli in Unbounded
+* nuovo logo promoremind (varianti chiara e scura), icone PWA e favicon
+* layout responsive: vista a card sotto i 1024px, nessuno scroll orizzontale da 320px
+* pagine caricate al bisogno e font con preconnect (bundle iniziale da 655 KB a 267 KB)
+* `aria-label` sui pulsanti solo icona e bersagli di tocco più grandi
+* script SQL per audit e rafforzamento della RLS (`supabase/`)
+
+### Refactoring
+
+* `Gestione.tsx` diviso in componenti (`components/gestione`) e nell'hook `useAssetActions`
+* azzerati gli errori ESLint; `useAuth` separato da `AuthProvider`
+
+### Bug Fixes
+
+* **api:** keep-alive senza credenziali nel codice e protetto da CRON_SECRET ([8d25846](https://github.com/areait-dev/MadRem/commit/8d258469bd9a39b6fbdb046ccdfd749e00af1bd8))
+
 ## [2.6.0](https://github.com/areait-dev/MadRem/compare/v2.5.2...v2.6.0) (2026-07-28)
 
 
