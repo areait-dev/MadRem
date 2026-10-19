@@ -60,7 +60,6 @@ export default function Footer() {
           <span className="caption text-muted hidden sm:block">
             &copy; {new Date().getFullYear()} Promotergroup S.p.A.
           </span>
-          <span className="tag tag-dark">by adr.IA.no-dev</span>
         </div>
       </div>
     </footer>
