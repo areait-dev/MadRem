@@ -43,7 +43,7 @@ const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => 
 
         {/* PEC Address */}
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">
             Indirizzo PEC
           </label>
           <div className="relative group">
@@ -70,7 +70,7 @@ const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => 
 
         {/* Password */}
         <div className="space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">
             Password Accesso
           </label>
           <div className="relative group">
@@ -106,7 +106,7 @@ const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => 
 
         {/* Expiry Date - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">
             Data di Scadenza
           </label>
           <div className="relative group">
@@ -114,7 +114,7 @@ const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => 
             <input
               type="date"
               required
-              className="input appearance-none min-w-0 max-w-full pl-12 pr-4 [color-scheme:light] dark:[color-scheme:dark]"
+              className="input appearance-none min-w-0 max-w-full pl-12 pr-4 scheme-light dark:scheme-dark"
               value={formData.expiry_date}
               onChange={(e) => setFormData({ ...formData, expiry_date: e.target.value })}
             />
@@ -123,7 +123,7 @@ const PecForm: React.FC<PecFormProps> = ({ initialData, onSubmit, loading }) => 
 
         {/* Notes - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">
             Annotazioni
           </label>
           <textarea

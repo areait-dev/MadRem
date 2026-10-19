@@ -21,7 +21,7 @@ export default function AssetRowDesktop({ row: rowItem, isChild = false, ctx }: 
   const formattedDate = formatDate(rowItem.expiry_date);
 
   return (
-    <div className={`hidden lg:grid grid-cols-12 gap-4 px-8 py-5 items-center hover:bg-surface/[0.02] transition-colors group ${activeTab === 'pec' && rowItem.is_disabled ? 'opacity-60 bg-surface/[0.01]' : ''}`}>
+    <div className={`hidden lg:grid grid-cols-12 gap-4 px-8 py-5 items-center hover:bg-surface/2 transition-colors group ${activeTab === 'pec' && rowItem.is_disabled ? 'opacity-60 bg-surface/1' : ''}`}>
 
       {activeTab === 'panels' ? (
         <>
@@ -38,20 +38,20 @@ export default function AssetRowDesktop({ row: rowItem, isChild = false, ctx }: 
           <div className="col-span-6 flex items-center gap-4">
             <div className="flex items-center bg-surface rounded-lg px-4 py-2 border border-transparent hover:border-accent/20 transition-all cursor-pointer group/cred w-[240px]"
               onClick={() => copyToClipboard(rowItem.email, `${rowItem.id}-user`)}>
-              <User size={14} className="text-muted mr-2 flex-shrink-0" />
+              <User size={14} className="text-muted mr-2 shrink-0" />
               <span className="text-xs font-semibold text-muted truncate flex-1">
                 {rowItem.email}
               </span>
-              <div className="ml-2 opacity-0 group-hover/cred:opacity-100 transition-opacity flex-shrink-0">
+              <div className="ml-2 opacity-0 group-hover/cred:opacity-100 transition-opacity shrink-0">
                 {copiedField === `${rowItem.id}-user` ? <Check size={12} className="text-success" /> : <Copy size={12} className="text-muted" />}
               </div>
             </div>
             <div className="flex items-center bg-surface rounded-lg px-4 py-2 border border-transparent hover:border-accent/20 transition-all w-[240px]">
-              <Lock size={14} className="text-muted mr-2 flex-shrink-0" />
+              <Lock size={14} className="text-muted mr-2 shrink-0" />
               <span className="text-xs font-semibold text-muted font-mono truncate flex-1">
                 {visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}
               </span>
-              <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+              <div className="flex items-center gap-1 ml-2 shrink-0">
                 <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 hover:text-link transition-colors text-muted">
                   {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
                 </button>
@@ -195,11 +195,11 @@ export default function AssetRowDesktop({ row: rowItem, isChild = false, ctx }: 
           </div>
           <div className="col-span-4 flex items-center gap-4">
             <div className="flex items-center bg-surface rounded-lg px-4 py-2 border border-transparent hover:border-accent/40 transition-all w-[240px]">
-              <Lock size={14} className="text-muted mr-2 flex-shrink-0" />
+              <Lock size={14} className="text-muted mr-2 shrink-0" />
               <span className="text-xs font-semibold text-muted font-mono truncate flex-1">
                 {visiblePasswords[rowItem.id] ? rowItem.password_encrypted : '••••••••'}
               </span>
-              <div className="flex items-center gap-1 ml-2 flex-shrink-0">
+              <div className="flex items-center gap-1 ml-2 shrink-0">
                 <button aria-label="Mostra o nascondi password" onClick={() => togglePassword(rowItem.id)} className="min-h-8 min-w-8 inline-flex items-center justify-center p-2 hover:text-link transition-colors text-muted">
                   {visiblePasswords[rowItem.id] ? <EyeOff size={14} /> : <Eye size={14} />}
                 </button>

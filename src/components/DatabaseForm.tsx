@@ -43,7 +43,7 @@ const DatabaseForm: React.FC<DatabaseFormProps> = ({ panels, initialData, onSubm
 
         {/* 1. Panel Selection - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Pannello Associato</label>
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Pannello Associato</label>
           <div className="relative group">
             <select
               required
@@ -62,7 +62,7 @@ const DatabaseForm: React.FC<DatabaseFormProps> = ({ panels, initialData, onSubm
 
         {/* 2. Associated Domain - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Dominio Associato</label>
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Dominio Associato</label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <Globe className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
@@ -78,9 +78,9 @@ const DatabaseForm: React.FC<DatabaseFormProps> = ({ panels, initialData, onSubm
         </div>
 
         {/* 3. Credentials Group - Full Width, 2 Columns */}
-        <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 p-5 rounded-card bg-surface/[0.02] border border-divider">
+        <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4 p-5 rounded-card bg-surface/2 border border-divider">
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Username SQL</label>
+            <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Username SQL</label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <DbIcon className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
@@ -97,7 +97,7 @@ const DatabaseForm: React.FC<DatabaseFormProps> = ({ panels, initialData, onSubm
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Password SQL</label>
+            <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Password SQL</label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Lock className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
@@ -125,7 +125,7 @@ const DatabaseForm: React.FC<DatabaseFormProps> = ({ panels, initialData, onSubm
         {/* 4. Hostname (3/5), Versione (1/5), Spazio (1/5) - Proportional Row */}
         <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-5 gap-4">
           <div className="sm:col-span-3 space-y-2">
-            <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Hostname / IP</label>
+            <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Hostname / IP</label>
             <div className="relative group">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Server className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
@@ -140,7 +140,7 @@ const DatabaseForm: React.FC<DatabaseFormProps> = ({ panels, initialData, onSubm
             </div>
           </div>
           <div className="sm:col-span-1 space-y-2">
-            <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Versione</label>
+            <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Versione</label>
             <input
               type="text"
               placeholder="5.7"
@@ -150,7 +150,7 @@ const DatabaseForm: React.FC<DatabaseFormProps> = ({ panels, initialData, onSubm
             />
           </div>
           <div className="sm:col-span-1 space-y-2">
-            <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">GB</label>
+            <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">GB</label>
             <div className="relative group">
               <HardDrive className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted pointer-events-none" />
               <input
@@ -166,13 +166,13 @@ const DatabaseForm: React.FC<DatabaseFormProps> = ({ panels, initialData, onSubm
 
         {/* 5. Data Scadenza - Full Width Row */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Data Scadenza</label>
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Data Scadenza</label>
           <div className="relative group w-full">
             <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted pointer-events-none z-10" />
             <input
               type="date"
               required
-              className="input appearance-none min-w-0 max-w-full pl-12 pr-4 [color-scheme:light] dark:[color-scheme:dark]"
+              className="input appearance-none min-w-0 max-w-full pl-12 pr-4 scheme-light dark:scheme-dark"
               value={formData.expiry_date}
               onChange={(e) => setFormData({ ...formData, expiry_date: e.target.value })}
             />

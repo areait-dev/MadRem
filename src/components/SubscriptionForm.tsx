@@ -32,7 +32,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({ initialData, onSubm
 
         {/* Subscription Name - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">
             Nome Abbonamento
           </label>
           <div className="relative group">
@@ -52,7 +52,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({ initialData, onSubm
 
         {/* Billing Cycle */}
         <div className="md:col-span-1 space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">
             Frequenza di Rinnovo
           </label>
           <div className="relative group">
@@ -73,7 +73,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({ initialData, onSubm
 
         {/* Expiry Date */}
         <div className="md:col-span-1 space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">
             Data di Scadenza
           </label>
           <div className="relative group">
@@ -81,7 +81,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({ initialData, onSubm
             <input
               type="date"
               required
-              className="input appearance-none min-w-0 max-w-full pl-12 pr-4 [color-scheme:light] dark:[color-scheme:dark]"
+              className="input appearance-none min-w-0 max-w-full pl-12 pr-4 scheme-light dark:scheme-dark"
               value={formData.expiry_date}
               onChange={(e) => setFormData({ ...formData, expiry_date: e.target.value })}
             />
@@ -90,7 +90,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({ initialData, onSubm
 
         {/* Notes - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">
             Annotazioni
           </label>
           <textarea

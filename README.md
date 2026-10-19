@@ -7,7 +7,7 @@ Produzione: <https://remind.promotergroup.eu>
 ## Stack
 
 - React 19 + TypeScript + Vite
-- Tailwind CSS 3 con i token del design system Promotergroup (`src/index.css`, `tailwind.config.js`)
+- Tailwind CSS 4 con i token del design system Promotergroup, definiti in `src/index.css` (`@theme`, nessun `tailwind.config.js`)
 - Supabase (autenticazione e database con RLS)
 - Framer Motion, SweetAlert2, lucide-react
 - PWA (`vite-plugin-pwa`) e hosting su Vercel

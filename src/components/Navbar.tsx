@@ -112,7 +112,7 @@ export default function Navbar() {
                   to={href}
                   className={`
                     flex items-center gap-3 px-3 md:px-5 py-2 md:py-2.5 rounded-card md:rounded-full transition-all duration-300
-                    outline-none focus:outline-none focus-visible:ring-2 focus-visible:ring-accent
+                    outline-hidden focus:outline-hidden focus-visible:ring-2 focus-visible:ring-accent
                     select-none active:scale-95
                     ${active
                       ? 'text-link'

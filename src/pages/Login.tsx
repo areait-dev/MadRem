@@ -119,7 +119,7 @@ export default function Login() {
               <div className="space-y-5">
                 {/* Email Input */}
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Email</label>
+                  <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Email</label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Mail className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
@@ -148,7 +148,7 @@ export default function Login() {
 
                 {/* Password Input */}
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Password</label>
+                  <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Password</label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <Lock className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
@@ -195,7 +195,7 @@ export default function Login() {
                     />
                     <div className={`w-5 h-5 rounded-lg border-2 transition-all duration-200 flex items-center justify-center ${rememberMe ? 'bg-accent border-primary' : 'border-divider group-hover:border-accent/50'
                       }`}>
-                      {rememberMe && <div className="w-2 h-2 bg-fg rounded-sm" />}
+                      {rememberMe && <div className="w-2 h-2 bg-fg rounded-xs" />}
                     </div>
                   </div>
                   <span className="ml-3 text-xs text-muted group-hover:text-fg transition-colors font-semibold uppercase tracking-widest">Rimani collegato</span>

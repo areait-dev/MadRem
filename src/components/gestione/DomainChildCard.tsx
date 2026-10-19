@@ -28,7 +28,7 @@ export default function DomainChildCard({ sub, ctx }: Props) {
           <div className="flex items-center gap-2">
             <p className="text-xs font-semibold text-fg truncate" title={sub.name}>{sub.name}</p>
             {sub.notes && (
-              <div className="flex-shrink-0 cursor-help text-muted" title={sub.notes}>
+              <div className="shrink-0 cursor-help text-muted" title={sub.notes}>
                 <FileText size={12} />
               </div>
             )}

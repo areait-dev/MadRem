@@ -139,7 +139,7 @@ const DatabaseSlots: React.FC<DatabaseSlotsProps> = ({ database, onUpdate }) => 
               <div key={num} className={`group flex items-center gap-2 p-1.5 rounded-lg border transition-all duration-300 ${
                 hasData 
                   ? 'bg-surface border-divider' 
-                  : 'bg-surface/[0.01] border-dashed border-divider opacity-70 focus-within:opacity-100'
+                  : 'bg-surface/1 border-dashed border-divider opacity-70 focus-within:opacity-100'
               } ${changed ? 'border-accent/40 ring-1 ring-accent' : ''}`}>
                 {/* Slot Indicator */}
                 <div className={`h-6 w-6 shrink-0 rounded-lg flex items-center justify-center font-semibold text-xs transition-all ${
@@ -149,25 +149,25 @@ const DatabaseSlots: React.FC<DatabaseSlotsProps> = ({ database, onUpdate }) => 
                 </div>
 
                 {/* Content Input */}
-                <div className="flex-[2] min-w-0">
+                <div className="flex-2 min-w-0">
                   <input
                     type="text"
                     placeholder="Sito o contenuto..."
-                    className="w-full bg-transparent border-none px-2 py-0.5 text-base font-semibold text-fg outline-none placeholder:text-muted"
+                    className="w-full bg-transparent border-none px-2 py-0.5 text-base font-semibold text-fg outline-hidden placeholder:text-muted"
                     value={localSlots[num].content}
                     onChange={(e) => setLocalSlots({ ...localSlots, [num]: { ...localSlots[num], content: e.target.value } })}
                   />
                 </div>
 
                 {/* Divider */}
-                <div className="h-4 w-[1px] bg-line/20" />
+                <div className="h-4 w-px bg-line/20" />
 
                 {/* Notes Input */}
                 <div className="flex-[1.5] min-w-0">
                   <input
                     type="text"
                     placeholder="Note..."
-                    className="w-full bg-transparent border-none px-2 py-0.5 text-base font-semibold text-muted outline-none placeholder:text-muted "
+                    className="w-full bg-transparent border-none px-2 py-0.5 text-base font-semibold text-muted outline-hidden placeholder:text-muted "
                     value={localSlots[num].notes}
                     onChange={(e) => setLocalSlots({ ...localSlots, [num]: { ...localSlots[num], notes: e.target.value } })}
                   />

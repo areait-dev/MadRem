@@ -246,7 +246,7 @@ const Gestione: React.FC = () => {
                                   {(item.subdomains ?? []).map((child) => renderRow(child, true))}
                                 </div>
                                 {/* Desktop: Modern Grid */}
-                                <div className="hidden lg:grid grid-cols-2 lg:grid-cols-3 gap-4 p-6 bg-surface/[0.02] border-t border-divider">
+                                <div className="hidden lg:grid grid-cols-2 lg:grid-cols-3 gap-4 p-6 bg-surface/2 border-t border-divider">
                                   {(item.subdomains ?? []).map((child) => <DomainChildCard key={child.id} sub={child} ctx={rowCtx} />)}
                                 </div>
                               </>

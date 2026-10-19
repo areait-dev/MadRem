@@ -30,7 +30,7 @@ const DomainForm: React.FC<DomainFormProps> = ({ panels, initialData, onSubmit, 
 
         {/* Panel Selection - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Pannello Associato</label>
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Pannello Associato</label>
           <div className="relative group">
             <select
               required
@@ -49,7 +49,7 @@ const DomainForm: React.FC<DomainFormProps> = ({ panels, initialData, onSubmit, 
 
         {/* Domain Name - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Indirizzo Dominio</label>
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Indirizzo Dominio</label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <Globe className="h-5 w-5 text-muted group-focus-within:text-link transition-colors" />
@@ -67,7 +67,7 @@ const DomainForm: React.FC<DomainFormProps> = ({ panels, initialData, onSubmit, 
 
         {/* Type Choice */}
         <div className="md:col-span-2 space-y-3">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Tipologia Dominio</label>
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Tipologia Dominio</label>
           <div className="flex p-1.5 bg-surface border border-divider rounded-lg gap-2">
             {[
               { id: 'main', label: 'Dominio Principale' },
@@ -90,13 +90,13 @@ const DomainForm: React.FC<DomainFormProps> = ({ panels, initialData, onSubmit, 
 
         {/* Expiry */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Scadenza</label>
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Scadenza</label>
           <div className="relative group">
             <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted pointer-events-none z-10" />
             <input
               type="date"
               required
-              className="input appearance-none min-w-0 max-w-full pl-12 pr-4 [color-scheme:light] dark:[color-scheme:dark]"
+              className="input appearance-none min-w-0 max-w-full pl-12 pr-4 scheme-light dark:scheme-dark"
               value={formData.expiry_date}
               onChange={(e) => setFormData({ ...formData, expiry_date: e.target.value })}
             />
@@ -105,7 +105,7 @@ const DomainForm: React.FC<DomainFormProps> = ({ panels, initialData, onSubmit, 
 
         {/* Notes - Full Width */}
         <div className="md:col-span-2 space-y-2">
-          <label className="text-xs font-semibold text-muted uppercase tracking-wider ml-1">Annotazioni</label>
+          <label className="block leading-[1.7rem] text-xs font-semibold text-muted uppercase tracking-wider ml-1">Annotazioni</label>
           <textarea
             placeholder="Dettagli aggiuntivi..."
             rows={2}

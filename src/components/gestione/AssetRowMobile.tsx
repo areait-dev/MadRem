@@ -21,7 +21,7 @@ export default function AssetRowMobile({ row: rowItem, isChild = false, ctx }: P
   const formattedDate = formatDate(rowItem.expiry_date);
 
   return (
-    <div className={`lg:hidden p-6 space-y-4 ${isChild ? 'ml-4 border-l-2 border-divider pl-4' : ''} ${activeTab === 'pec' && rowItem.is_disabled ? 'opacity-60 bg-surface/[0.01]' : ''}`}>
+    <div className={`lg:hidden p-6 space-y-4 ${isChild ? 'ml-4 border-l-2 border-divider pl-4' : ''} ${activeTab === 'pec' && rowItem.is_disabled ? 'opacity-60 bg-surface/1' : ''}`}>
       <div className="flex items-start justify-between gap-3">
         <div className={`flex items-center gap-3 min-w-0 flex-1 ${rowItem.isGroup ? 'cursor-pointer' : ''}`} onClick={() => rowItem.isGroup && toggleGroup(rowItem.id)}>
           <div className={`p-3 rounded-card ${activeTab === 'panels' ? 'bg-accent/10 text-link' : activeTab === 'pec' ? (rowItem.is_disabled ? 'bg-line/20 text-muted' : 'bg-accent/10 text-link') : activeTab === 'subscriptions' ? 'bg-success/10 text-success' : 'bg-surface text-muted'}`}>
@@ -33,7 +33,7 @@ export default function AssetRowMobile({ row: rowItem, isChild = false, ctx }: P
                 {rowItem.title || rowItem.name || rowItem.sql_name || rowItem.address}
               </p>
               {!rowItem.isGroup && rowItem.notes && (
-                <div className="flex-shrink-0 text-muted">
+                <div className="shrink-0 text-muted">
                   <FileText size={12} />
                 </div>
               )}
@@ -86,7 +86,7 @@ export default function AssetRowMobile({ row: rowItem, isChild = false, ctx }: P
             <div className="space-y-3">
               <div className="flex items-center justify-between group/mobcred" onClick={() => copyToClipboard(rowItem.address, `${rowItem.id}-user-mob`)}>
                 <div className="flex items-center gap-2 overflow-hidden">
-                  <Mail size={12} className="text-link flex-shrink-0" />
+                  <Mail size={12} className="text-link shrink-0" />
                   <span className="text-xs font-semibold text-muted truncate">{rowItem.address}</span>
                 </div>
                 {copiedField === `${rowItem.id}-user-mob` ? <Check size={12} className="text-success" /> : <Copy size={12} className="text-muted opacity-50" />}

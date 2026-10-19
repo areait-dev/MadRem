@@ -32,7 +32,7 @@ export default function GestioneToolbar({
           placeholder={`Cerca tra ${activeTab === 'panels' ? 'i pannelli' : activeTab === 'domains' ? 'i domini' : activeTab === 'databases' ? 'i database' : activeTab === 'pec' ? 'le PEC' : 'gli abbonamenti'}...`}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-12 pr-4 py-2.5 sm:py-3 bg-transparent border-transparent rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider outline-none transition-all placeholder:text-muted"
+          className="w-full pl-12 pr-4 py-2.5 sm:py-3 bg-transparent border-transparent rounded-full text-xs sm:text-sm leading-4 sm:leading-5 font-semibold uppercase tracking-wider outline-hidden transition-all placeholder:text-muted"
         />
       </div>
 
@@ -102,7 +102,7 @@ export default function GestioneToolbar({
             <select
               value={selectedPanel}
               onChange={(e) => setSelectedPanel(e.target.value)}
-              className="appearance-none w-full max-w-full text-ellipsis bg-surface text-muted text-xs font-semibold uppercase tracking-wider pl-8 pr-8 rounded-full outline-none border-none cursor-pointer hover:bg-line/20 transition-all min-w-[110px] h-full leading-none"
+              className="appearance-none w-full max-w-full text-ellipsis bg-surface text-muted text-xs leading-4 font-semibold uppercase tracking-wider pl-8 pr-8 rounded-full outline-hidden border-none cursor-pointer hover:bg-line/20 transition-all min-w-[110px] h-full leading-none"
             >
               <option value="all">Tutti</option>
               {panels.map(p => (
