@@ -180,6 +180,8 @@ const Gestione: React.FC = () => {
   };
 
   const buttonLabel = activeTab === 'panels' ? 'Pannello' : activeTab === 'domains' ? 'Dominio' : activeTab === 'databases' ? 'Database' : activeTab === 'pec' ? 'PEC' : 'Abbonamento';
+  // "PEC" è femminile: Nuova PEC
+  const newLabel = (activeTab === 'pec' ? 'Nuova ' : 'Nuovo ') + buttonLabel;
 
   return (
     <div className="min-h-screen bg-page pt-10 pb-32 px-gutter transition-colors duration-500">
@@ -192,7 +194,7 @@ const Gestione: React.FC = () => {
             <p className="text-muted font-semibold text-sm tracking-widest uppercase">Controllo centralizzato dell'infrastruttura</p>
           </div>
           <button onClick={() => handleOpenModal()} className="btn-primary">
-            <Plus size={18} /> {buttonLabel === "PEC" ? "Nuova PEC" : "Nuovo " + buttonLabel}
+            <Plus size={18} /> {newLabel}
           </button>
         </div>
 
@@ -277,7 +279,7 @@ const Gestione: React.FC = () => {
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title={editingItem ? 'Modifica Asset' : `Nuovo ${buttonLabel}`}
+        title={editingItem ? 'Modifica Asset' : newLabel}
       >
         {activeTab === 'panels' && (
           <PanelForm initialData={(editingItem ?? undefined) as Partial<ArubaPanel> | undefined} onSubmit={handleSave} loading={loading} />
