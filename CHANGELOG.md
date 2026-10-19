@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/areait-dev/MadRem/compare/v3.0.1...v3.1.0) (2026-10-19)
+
+### Features
+
+* **login:** nuovo layout a colonna singola con sfondo a puntini interattivo e alone che segue il cursore (rispetta `prefers-reduced-motion`)
+
 ### [3.0.1](https://github.com/areait-dev/MadRem/compare/v3.0.0...v3.0.1) (2026-10-19)
 
 ### Build
