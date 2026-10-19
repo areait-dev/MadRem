@@ -13,6 +13,7 @@ import {
   Tag
 } from 'lucide-react';
 import { useInfrastructure } from '../hooks/useInfrastructure';
+import { usePageTitle } from '../hooks/usePageTitle';
 import type { ArubaPanel, AssetRow, PecEmail, Subscription } from '../types';
 
 const Dashboard: React.FC = () => {
@@ -71,6 +72,9 @@ const Dashboard: React.FC = () => {
       return diffDays <= 30;
     })
     .sort((a, b) => new Date(a.expiry_date!).getTime() - new Date(b.expiry_date!).getTime());
+
+  // Nel titolo della scheda compare il numero di scadenze imminenti, es. "(4) Dashboard · promoremind"
+  usePageTitle(expiringAssets.length > 0 ? `(${expiringAssets.length}) Dashboard` : 'Dashboard');
 
   const stats = {
     totalPanels: panels.length,
